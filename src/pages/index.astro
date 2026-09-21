@@ -18,3 +18,11 @@ import Footer from '../components/Footer.astro';
     <Footer />
   </main>
 </Layout>
+
+<script is:inline>
+  // Ocultar wrap de Netlify en la página de inicio
+  const netlifyWrap = document.querySelector('.nl-wrap');
+  if (netlifyWrap) {
+    netlifyWrap.style.display = 'none';
+  }
+</script>

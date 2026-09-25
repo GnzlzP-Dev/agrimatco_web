@@ -1,0 +1,63 @@
+---
+const benefits = [
+  {
+    title: 'Precios y Volumen Preferencial',
+    desc: 'Condiciones comerciales diferenciadas para pedidos por mayor, pensadas para el movimiento real de tu agrotienda.',
+  },
+  {
+    title: 'Respaldo Técnico para tus Clientes',
+    desc: 'Nuestros asesores capacitan a tu equipo y, si lo necesitas, visitan directamente al agricultor que te compra.',
+  },
+  {
+    title: 'Material y Exhibición en Punto de Venta',
+    desc: 'Te apoyamos con exhibidores y material informativo de la línea Cultivar para que tus clientes conozcan el producto en tienda.',
+  },
+];
+---
+
+<section id="agrotiendas" class="relative bg-white py-16 md:py-24 border-t border-gray-100 scroll-mt-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
+      <div class="lg:col-span-5">
+        <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+          Para Distribuidores
+        </span>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight mb-4">
+          ¿Tienes una Agrotienda? Conviértete en Aliado Amcopaste
+        </h2>
+        <p class="text-sm sm:text-base text-[#6B7280] leading-relaxed mb-6">
+          Buscamos agrotiendas comprometidas con llevar tecnología de calidad al agricultor de su municipio. Si ya tienes clientela agrícola activa, hablemos de cómo distribuir la línea Cultivar en tu zona.
+        </p>
+        <a
+          href="https://wa.me/573000000000?text=Hola%2C%20tengo%20una%20agrotienda%20y%20quiero%20informaci%C3%B3n%20para%20ser%20distribuidor"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-brand-green hover:bg-[#00633a] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-lg hover:-translate-y-0.5 group"
+        >
+          Quiero Ser Distribuidor
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-1 gap-4">
+        {benefits.map((b) => (
+          <div class="flex gap-4 bg-gray-50 border border-gray-100 rounded-2xl p-5 sm:p-6 hover:border-brand-green/30 transition-colors duration-300">
+            <div class="shrink-0 w-10 h-10 rounded-lg bg-brand-green/10 text-brand-green flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[#111827] mb-1">{b.title}</h3>
+              <p class="text-sm text-[#4B5563] leading-relaxed">{b.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>

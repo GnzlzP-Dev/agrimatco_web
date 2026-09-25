@@ -1,8 +1,35 @@
 ---
+const faqs = [
+  {
+    question: "¿Dónde puedo comprar los productos Amcopaste de Agrimatco?",
+    answer: "No vendemos directamente al público desde nuestra oficina de operación. Nuestro modelo funciona a través de los almacenes agrícolas y agrotiendas locales de cada municipio. Si quieres saber qué tienda aliada los tiene cerca de tu finca, escríbenos a nuestra línea de atención para direccionarte correctamente."
+  },
+  {
+    question: "¿A qué zonas y municipios llegan los asesores de Agrimatco?",
+    answer: "Actualmente nuestro equipo técnico y de ventas recorre las agrotiendas y fincas del Oriente y Norte de Antioquia, la región del Sumapaz en Cundinamarca y los municipios aledaños a Neiva en el Huila. Si estás en estas zonas, puedes coordinar una visita personalizada a tu cultivo con nosotros."
+  },
+  {
+    question: "¿Qué es la línea Cultivar y en qué se diferencia de otros fertilizantes?",
+    answer: "Cultivar es nuestra línea de fertilizantes en pasta Amcopaste, con una estructura física que ofrece mayor solubilidad y asimilación inmediata frente a los granulados tradicionales. Esto significa que la planta aprovecha el nutriente más rápido y se reduce el desperdicio por lixiviación en el suelo."
+  },
+  {
+    question: "¿Cómo sé qué producto Amcopaste necesita mi cultivo?",
+    answer: "Cada referencia está diseñada para una etapa específica: enraizamiento (20-50-10+TE), floración (5-50-30+TE), crecimiento vegetativo (20-20-20+TE) o llenado y maduración (15-20-50+TE). Nuestro equipo técnico puede visitar tu finca, evaluar la etapa de tu cultivo y recomendarte la referencia correcta sin costo."
+  },
+  {
+    question: "¿Ofrecen pruebas o parcelas demostrativas antes de comprar?",
+    answer: "Sí. Comprobamos la eficacia de nuestras fórmulas directamente en lotes comerciales de nuestros clientes, para que veas los resultados reales en tus plantas antes de decidir el cambio de producto en toda tu finca."
+  },
+  {
+    question: "¿Cómo agendo una visita técnica con un asesor de Agrimatco?",
+    answer: "Puedes escribirnos directamente por WhatsApp indicando tu ubicación, cultivo y municipio. Uno de nuestros asesores de zona (Oriente/Norte Antioqueño, Sumapaz o Huila) te contactará para coordinar la visita y el diagnóstico inicial."
+  },
+];
 ---
+
 <section id="faq" class="relative bg-white py-16 md:py-24 overflow-hidden border-t border-gray-100 scroll-mt-10">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    
+
     <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
       <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
         Resolvemos tus Dudas
@@ -11,43 +38,38 @@
     </div>
 
     <div class="space-y-4">
-      
-      <details class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden transition-all duration-300 open:shadow-md open:border-brand-green/30">
-        <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer focus:outline-none select-none">
-          <h3 class="text-base sm:text-lg font-bold text-[#111827] pr-4 group-open:text-brand-green transition-colors duration-200">
-            ¿Dónde puedo comprar los productos Amcopaste de Agrimatco?
-          </h3>
-          <span class="shrink-0 rounded-full bg-gray-50 p-1.5 text-[#111827] group-open:bg-brand-green/10 group-open:text-brand-green group-open:rotate-180 transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
-        </summary>
-        <div class="px-5 pb-5 border-t border-gray-100 pt-3">
-          <p class="text-sm sm:text-base text-[#4B5563] leading-relaxed">
-            No vendemos directamente al público desde nuestra oficina de operación. Nuestro modelo funciona a través de los <strong class="text-[#111827] font-semibold">almacenes agrícolas y agrotiendas locales</strong> de cada municipio. Si quieres saber qué tienda aliada los tiene cerca de tu finca, escríbenos a nuestra línea de atención para direccionarte correctamente.
-          </p>
-        </div>
-      </details>
-
-      <details class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden transition-all duration-300 open:shadow-md open:border-brand-green/30">
-        <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer focus:outline-none select-none">
-          <h3 class="text-base sm:text-lg font-bold text-[#111827] pr-4 group-open:text-brand-green transition-colors duration-200">
-            ¿A qué zonas y municipios llegan los asesores de Agrimatco?
-          </h3>
-          <span class="shrink-0 rounded-full bg-gray-50 p-1.5 text-[#111827] group-open:bg-brand-green/10 group-open:text-brand-green group-open:rotate-180 transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
-        </summary>
-        <div class="px-5 pb-5 border-t border-gray-100 pt-3">
-          <p class="text-sm sm:text-base text-[#4B5563] leading-relaxed">
-            Actualmente nuestro equipo técnico y de ventas recorre las agrotiendas y fincas del <span class="text-[#111827] font-medium">Oriente y Norte de Antioquia</span>, la región del <span class="text-[#111827] font-medium">Sumapaz en Cundinamarca</span> y los municipios aledaños a <span class="text-[#111827] font-medium">Neiva en el Huila</span>. Si estás en estas zonas, puedes coordinar una visita personalizada a tu cultivo con nosotros.
-          </p>
-        </div>
-      </details>
-
+      {faqs.map((faq) => (
+        <details class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden transition-all duration-300 open:shadow-md open:border-brand-green/30">
+          <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer focus:outline-none select-none">
+            <h3 class="text-base sm:text-lg font-bold text-[#111827] pr-4 group-open:text-brand-green transition-colors duration-200">
+              {faq.question}
+            </h3>
+            <span class="shrink-0 rounded-full bg-gray-50 p-1.5 text-[#111827] group-open:bg-brand-green/10 group-open:text-brand-green group-open:rotate-180 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </summary>
+          <div class="px-5 pb-5 border-t border-gray-100 pt-3">
+            <p class="text-sm sm:text-base text-[#4B5563] leading-relaxed">
+              {faq.answer}
+            </p>
+          </div>
+        </details>
+      ))}
     </div>
   </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  })} />
 </section>

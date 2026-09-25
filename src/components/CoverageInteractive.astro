@@ -1,0 +1,102 @@
+---
+import 'leaflet/dist/leaflet.css';
+
+const zones = [
+  {
+    name: 'Oriente / Norte Antioqueño',
+    coords: [6.35, -75.15],
+    tag: 'Sede Central Medellín',
+    desc: 'Cobertura técnica en las zonas productoras clave de hortalizas, flores, papa y aguacate.',
+  },
+  {
+    name: 'Sumapaz, Cundinamarca',
+    coords: [4.15, -74.35],
+    tag: 'Región Central',
+    desc: 'Presencia, distribución activa y asesoramiento directo a través de los almacenes líderes de la provincia.',
+  },
+  {
+    name: 'Neiva, Huila',
+    coords: [2.93, -75.28],
+    tag: 'Región Sur',
+    desc: 'Cobertura técnica y comercial optimizada para atender de manera eficiente los cultivos locales de la zona.',
+  },
+];
+
+
+---
+
+<section id="cobertura" class="relative bg-white py-16 md:py-24 overflow-hidden scroll-mt-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-2xl mb-10">
+      <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+        Expansión Estratégica
+      </span>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+        Cobertura y Presencia Agrimatco: <span class="text-white bg-brand-green px-5">Siempre cerca de tu región</span>
+      </h2>
+    </div>
+
+    <!-- Mapa -->
+    <div id="coverage-map" class="w-full h-[420px] rounded-2xl border border-gray-100 shadow-sm mb-10"></div>
+
+    <!-- Tarjetas (misma data que el mapa) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {zones.map((z) => (
+        <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+            <h3 class="text-base font-bold text-[#111827]">{z.name}</h3>
+            <span class="px-2 py-1 rounded bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase">
+              {z.tag}
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-[#4B5563]">{z.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ zones }}>
+  import L from 'leaflet';
+
+  const colombiaBounds = L.latLngBounds([[-4.5, -82.5], [13.5, -66.5]]);
+
+  const map = L.map('coverage-map', {
+    scrollWheelZoom: false,
+    dragging: true,
+    touchZoom: true,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    maxBounds: colombiaBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
+    maxZoom: 8,
+  }).setView([5.0, -75.0], 6.3);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  function brandIcon() {
+    return L.divIcon({
+      html: `<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 0C7.2 0 0 7.2 0 16c0 11 16 24 16 24s16-13 16-24c0-8.8-7.2-16-16-16z"
+              fill="#007A48" stroke="white" stroke-width="2"/>
+        <path d="M20 13c-2 3-5 3.5-7.5 2.5 1 2.5 3.5 4 6 3.5.5-2 1-4.5 1.5-6z" fill="white"/>
+      </svg>`,
+      className: '',
+      iconSize: [32, 40],
+      iconAnchor: [16, 40],
+      popupAnchor: [0, -38],
+    });
+  }
+
+  zones.forEach((z) => {
+    L.marker(z.coords, { icon: brandIcon() })
+      .addTo(map)
+      .bindPopup(`<strong>${z.name}</strong><br>${z.desc}`);
+  });
+</script>

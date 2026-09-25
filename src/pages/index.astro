@@ -6,23 +6,26 @@ import Coverage from '../components/Coverage.astro';
 import Products from '../components/Products.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
+import Reviews from '../components/Reviews.astro';
+import Banner from '../components/Banner.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import AgroDealers from '../components/AgroDealers.astro';
+import ContactForm from '../components/ContactForm.astro';
 ---
 
 <Layout title="Agrimatco | Fertilizantes en Pasta y Nutrición Vegetal de Alta Eficiencia">
   <main class="overflow-hidden">
     <Hero />
     <Features />
+    <HowItWorks />
     <Coverage />
     <Products />
+    <Banner />
     <FAQ />
+    <AgroDealers />
+    <Reviews />
+    <ContactForm />
     <Footer />
   </main>
 </Layout>
 
-<script is:inline>
-  // Ocultar wrap de Netlify en la página de inicio
-  const netlifyWrap = document.querySelector('#nl-badge-frame');
-  if (netlifyWrap) {
-    netlifyWrap.style.display = 'none';
-  }
-</script>

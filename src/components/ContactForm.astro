@@ -1,0 +1,105 @@
+<section id="contacto-form" class="relative bg-[#F9FAFB] py-16 md:py-24 border-t border-gray-100 scroll-mt-10">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+    <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+      ¿Prefieres que te Llamemos?
+    </span>
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight mb-4">
+      Déjanos tus Datos y un Asesor te Contacta
+    </h2>
+    <p class="text-sm sm:text-base text-[#6B7280] mb-10">
+      Si prefieres no escribir por WhatsApp ahora mismo, completa el formulario y te llamamos en menos de 24 horas.
+    </p>
+
+    <form
+      id="lead-form"
+      name="contacto-lead"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="empresa-web"
+      class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 text-left space-y-4"
+    >
+      <input type="hidden" name="form-name" value="contacto-lead" />
+      <input type="hidden" name="timestamp" id="form-timestamp" value="" />
+
+      <!-- Honeypot: invisible para humanos, los bots lo llenan igual -->
+      <div class="absolute -left-[9999px] opacity-0" aria-hidden="true">
+        <label>No llenar este campo: <input type="text" name="empresa-web" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-[#111827] uppercase tracking-wide mb-1.5">Nombre completo</label>
+        <input
+          type="text"
+          name="nombre"
+          required
+          minlength="3"
+          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green text-sm"
+          placeholder="Ej: Carlos Ramírez"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-[#111827] uppercase tracking-wide mb-1.5">WhatsApp o teléfono</label>
+        <input
+          type="tel"
+          name="telefono"
+          required
+          pattern="[0-9+\s]{7,15}"
+          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green text-sm"
+          placeholder="Ej: 310 345 6789"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-[#111827] uppercase tracking-wide mb-1.5">Municipio y cultivo</label>
+        <input
+          type="text"
+          name="cultivo"
+          required
+          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green text-sm"
+          placeholder="Ej: La Ceja, aguacate"
+        />
+      </div>
+
+      <label class="flex items-start gap-2.5 pt-1">
+        <input type="checkbox" required class="mt-1 accent-brand-green" />
+        <span class="text-xs text-[#6B7280] leading-relaxed">
+          Acepto que Agrimatco Colombia me contacte por WhatsApp o llamada para brindarme asesoría.
+        </span>
+      </label>
+
+      <button
+        type="submit"
+        class="w-full px-6 py-3.5 rounded-lg bg-brand-green hover:bg-[#00633a] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-md hover:-translate-y-0.5"
+      >
+        Quiero que me Contacten
+      </button>
+
+      <p id="form-msg" class="text-xs text-center hidden"></p>
+    </form>
+  </div>
+</section>
+
+<script is:inline>
+  // Antispam capa 2: sello de tiempo al cargar la página.
+  // Un bot que llena y envía el formulario en menos de 3 segundos
+  // casi seguro no es humano.
+  document.getElementById('form-timestamp').value = Date.now().toString();
+
+  const leadForm = document.getElementById('lead-form');
+  const formMsg = document.getElementById('form-msg');
+
+  leadForm.addEventListener('submit', (e) => {
+    const loadedAt = parseInt(document.getElementById('form-timestamp').value, 10);
+    const elapsedSeconds = (Date.now() - loadedAt) / 1000;
+
+    if (elapsedSeconds < 3) {
+      e.preventDefault();
+      formMsg.textContent = 'Por favor revisa el formulario e inténtalo de nuevo.';
+      formMsg.className = 'text-xs text-center text-red-500 block mt-2';
+      return;
+    }
+    // Si pasa la validación, Netlify Forms recibe el envío normalmente.
+  });
+</script>

@@ -1,0 +1,71 @@
+---
+const steps = [
+  {
+    number: '01',
+    title: 'Nos Escribes',
+    desc: 'Cuéntanos tu cultivo, municipio y qué necesitas por WhatsApp o llamada. Sin formularios largos.',
+  },
+  {
+    number: '02',
+    title: 'Visita Técnica Gratuita',
+    desc: 'Un asesor de tu zona va a tu finca, revisa el estado del cultivo y toma los datos necesarios.',
+  },
+  {
+    number: '03',
+    title: 'Diagnóstico y Recomendación',
+    desc: 'Te decimos exactamente qué referencia Amcopaste necesita tu cultivo y en qué etapa aplicarla.',
+  },
+  {
+    number: '04',
+    title: 'Lo Consigues en tu Agrotienda',
+    desc: 'Compras el producto recomendado en la agrotienda aliada más cercana a tu finca.',
+  },
+];
+---
+
+<section id="como-funciona" class="relative bg-[#F9FAFB] py-16 md:py-24 overflow-hidden scroll-mt-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+        Así Trabajamos
+      </span>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+        De tu Mensaje a tu Cultivo Fertilizado
+      </h2>
+    </div>
+
+    <div class="relative grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-4">
+
+      <div class="hidden md:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-brand-green/20"></div>
+
+      {steps.map((step, i) => (
+        <div class="relative flex flex-col items-center text-center">
+          <div class="w-20 h-20 rounded-full bg-white border-2 border-brand-green flex items-center justify-center text-2xl font-extrabold text-brand-green shadow-sm z-10 mb-5">
+            {step.number}
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-[#111827] mb-2">
+            {step.title}
+          </h3>
+          <p class="text-xs sm:text-sm text-[#4B5563] leading-relaxed px-2">
+            {step.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-14 flex justify-center">
+      <a
+        href="https://wa.me/573000000000"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-brand-green hover:bg-[#00633a] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-xl shadow-emerald-950/20 hover:-translate-y-0.5 group"
+      >
+        Empezar por WhatsApp
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

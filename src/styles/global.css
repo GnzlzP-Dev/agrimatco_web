@@ -3,33 +3,38 @@
 /* 1. Registrar Rubik Variable */
 @font-face {
   font-family: 'Rubik';
-  src: url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype');
-  font-weight: 300 900;
+  src: url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
   font-display: swap;
 }
 
 /* 2. Registrar Unbounded Variable */
 @font-face {
   font-family: 'Unbounded';
-  src: url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype');
-  font-weight: 200 900;
+  src: url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
   font-display: swap;
 }
 
-/* 3. Definir todas las personalizaciones de Tailwind v4 en UN SOLO bloque @theme */
+/* 3. Integración con Tailwind CSS v4 */
 @theme {
-  /* Fuentes */
   --font-sans: 'Rubik', system-ui, sans-serif;
   --font-heading: 'Unbounded', system-ui, sans-serif;
 
-  /* Colores Corporativos Agrimatco */
   --color-brand-green: #00bb33;
   --color-brand-dark: #3c3c3c;
   --color-brand-gold: #c39768;
 }
 
-/* 4. Estilos base para etiquetas HTML */
+/* 4. Forzar fuentes por defecto en elementos base */
 @layer base {
+  body {
+    font-family: var(--font-sans);
+  }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
   }

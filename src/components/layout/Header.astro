@@ -15,9 +15,7 @@ const navLinks = [
   { label: 'Servicios', href: isHome ? '#servicios' : '/#servicios', anchor: '#servicios' },
   { label: 'Cobertura', href: isHome ? '#cobertura' : '/#cobertura', anchor: '#cobertura' },
   { label: 'Productos', href: isHome ? '#productos' : '/#productos', anchor: '#productos' },
-  // Es una página real, no un ancla: sin `anchor` para que el sincronizado de
-  // `href` de abajo no lo toque. El `undefined` explícito mantiene el tipo del
-  // array uniforme, y Astro omite el atributo `data-anchor` al renderizar.
+  { label: 'FAQ', href: isHome ? '#faq' : '/#faq', anchor: '#faq' },
   { label: 'Galería', href: '/gallery', anchor: undefined }
 ];
 

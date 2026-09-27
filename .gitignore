@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# fotos crudas del cliente, entrada de `npm run gallery:optimize`.
+# Se ignora el contenido pero se versiona el .gitkeep para que la carpeta
+# exista en clones nuevos. Con `incoming/` a secas el .gitkeep tampoco se
+# guardaría y la carpeta no aparecería tras clonar.
+incoming/*
+!incoming/.gitkeep

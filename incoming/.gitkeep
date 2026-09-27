@@ -1,0 +1,6 @@
+Coloca aquí las fotos crudas que te envía el cliente y ejecuta:
+
+    npm run gallery:optimize
+
+Esta carpeta no se versiona (salvo este archivo) y nunca se despliega.
+Las fotos optimizadas van a src/assets/gallery/.

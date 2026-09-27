@@ -1,0 +1,106 @@
+---
+import GalleryTile from './GalleryTile.astro';
+import type { GalleryEntry } from '../../data/gallery';
+
+interface Props {
+  items: GalleryEntry[];
+}
+
+const { items } = Astro.props;
+
+// Las primeras filas son las visibles al cargar: sin lazy para no penalizar el LCP.
+const PRIORITY_COUNT = 8;
+
+const hasVideos = items.some((item) => item.type === 'video' && item.videoId);
+
+// Payload único que consumen el lightbox y el autoplay.
+const payload = items.map((item) => ({
+  type: item.type,
+  videoId: item.videoId ?? null,
+  title: item.title ?? item.alt,
+  alt: item.alt,
+  fullSrc: item.fullSrc,
+  fullWidth: item.fullWidth,
+  fullHeight: item.fullHeight,
+}));
+---
+
+{
+  items.length === 0 ? (
+    <div class="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-20 text-center">
+      <p class="text-sm leading-relaxed text-gray-500">
+        Todavía no hay contenido en la galería.
+        <br />
+        Las fotos van en <code class="rounded bg-gray-100 px-1.5 py-0.5 text-xs">src/assets/gallery/</code>
+        y se declaran en <code class="rounded bg-gray-100 px-1.5 py-0.5 text-xs">src/data/gallery.ts</code>.
+      </p>
+    </div>
+  ) : (
+    <>
+      <div class="columns-1 sm:columns-2 lg:columns-3 gap-4">
+        {items.map((item, i) => (
+          <div class="mb-4 break-inside-avoid">
+            <GalleryTile item={item} index={i} priority={i < PRIORITY_COUNT} />
+          </div>
+        ))}
+      </div>
+
+      <script type="application/json" id="gallery-data" set:html={JSON.stringify(payload)} is:inline />
+
+      {hasVideos && (
+        <script is:inline data-astro-rerun>
+          // Facade: el iframe del video no se crea hasta que el tile entra en pantalla.
+          const data = JSON.parse(document.getElementById('gallery-data')?.textContent ?? '[]');
+          const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          if (!reduceMotion) {
+            // Con `data-astro-rerun` esto corre en cada navegación: se cierra el
+            // observer anterior para no dejar observing tiles que ya no existen.
+            if (window.__galleryObserver) window.__galleryObserver.disconnect();
+
+            const observer = new IntersectionObserver(
+              (entries) => {
+                for (const entry of entries) {
+                  const tile = entry.target;
+                  const index = tile.dataset.index;
+                  const item = data[index];
+                  if (!item || item.type !== 'video' || !item.videoId) continue;
+
+                  const holder = tile.querySelector('[data-video-holder]');
+                  const overlay = tile.parentElement?.querySelector('[data-play-overlay]');
+                  if (!holder) continue;
+
+                  if (entry.isIntersecting && !holder.querySelector('iframe')) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src =
+                      'https://www.youtube-nocookie.com/embed/' +
+                      item.videoId +
+                      '?rel=0&modestbranding=1&enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=' +
+                      item.videoId;
+                    iframe.title = item.title;
+                    iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+                    iframe.allowFullscreen = true;
+                    iframe.className = 'absolute inset-0 h-full w-full border-0';
+                    holder.appendChild(iframe);
+                    if (overlay) overlay.style.display = 'none';
+                  } else if (!entry.isIntersecting) {
+                    // Se pausa en vez de destruirse: destruirlo obliga a recargarlo.
+                    const frame = holder.querySelector('iframe');
+                    frame?.contentWindow?.postMessage(
+                      '{"event":"command","func":"pauseVideo","args":""}',
+                      'https://www.youtube-nocookie.com'
+                    );
+                  }
+                }
+              },
+              { threshold: 0.65 }
+            );
+
+            document.querySelectorAll('[data-video-tile]').forEach((tile) => observer.observe(tile));
+            window.__galleryObserver = observer;
+          }
+        </script>
+      )}
+    </>
+  )
+}

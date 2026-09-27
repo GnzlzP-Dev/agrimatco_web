@@ -1,4 +1,9 @@
 ---
+import { getImage } from 'astro:assets';
+import mapaInvert from '../../assets/backgrounds/mapa-invert.webp';
+
+const mapaBg = await getImage({ src: mapaInvert, width: 1920, format: 'webp' });
+
 const coverage = [
   {
     department: 'Antioquia',
@@ -27,9 +32,13 @@ const coverage = [
 ];
 ---
 
-<section id="cobertura" class="relative before:absolute before:inset-0 
-            before:bg-[url(/mapa-invert.jpeg)] before:bg-cover before:bg-center before:bg-no-repeat 
-            before:opacity-70 py-16 md:py-24 overflow-hidden scroll-mt-10">
+<section
+  id="cobertura"
+  class="relative before:absolute before:inset-0
+            before:bg-[image:var(--coverage-bg)] before:content-[''] before:bg-cover before:bg-center before:bg-no-repeat
+            before:opacity-70 py-16 md:py-24 overflow-hidden scroll-mt-10"
+  style={`--coverage-bg: url(${mapaBg.src})`}
+>
   <div class="absolute bottom-0 left-0 w-full h-60 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-0"></div>
   <div class="absolute top-0 left-0 w-full h-60 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-0"></div>
 

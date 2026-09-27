@@ -1,0 +1,192 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/ui/brand/logo-horizontal-agrimatco.png';
+import FacebookLogo from '../../assets/ui/socials/Logo_Facebook.svg';
+import InstagramLogo from '../../assets/ui/socials/Logo_Instagram.svg';
+import WhatsappLogo from '../../assets/ui/socials/Logo_WhatsappIcon.svg';
+
+const isHome = Astro.url.pathname === '/';
+
+// En la home las secciones existen, así que basta la ancla.
+// En el resto de páginas hay que volver a la home para que la ancla resuelva.
+const section = (anchor: string) => (isHome ? anchor : `/${anchor}`);
+
+const navLinks = [
+  { label: 'Servicios', href: isHome ? '#servicios' : '/#servicios', anchor: '#servicios' },
+  { label: 'Cobertura', href: isHome ? '#cobertura' : '/#cobertura', anchor: '#cobertura' },
+  { label: 'Productos', href: isHome ? '#productos' : '/#productos', anchor: '#productos' },
+  // Es una página real, no un ancla: sin `anchor` para que el sincronizado de
+  // `href` de abajo no lo toque. El `undefined` explícito mantiene el tipo del
+  // array uniforme, y Astro omite el atributo `data-anchor` al renderizar.
+  { label: 'Galería', href: '/gallery', anchor: undefined }
+];
+
+const solidClasses = 'bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green';
+const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4';
+---
+
+<header
+  id="main-header"
+  transition:persist="site-header"
+  data-overlay={isHome ? 'true' : 'false'}
+  class:list={[
+    'fixed top-0 left-0 w-full z-50 transition-all duration-200',
+    isHome ? overlayClasses : solidClasses,
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.02]">
+      <Image
+        src={logo}
+        alt="Agrimatco"
+        widths={[150, 300]}
+        sizes="150px"
+        loading="eager"
+        fetchpriority="high"
+        class="h-12 w-auto"
+      />
+    </a>
+
+    <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-white">
+      {navLinks.map((link) => <a href={link.href} data-anchor={link.anchor} class="hover:text-brand-green transition-colors">{link.label}</a>)}
+      <a href={section('#contact-form')} data-anchor="#contact-form" class="bg-brand-green hover:bg-[#00633a] text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20">Contacto</a>
+    </nav>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="md:hidden p-2 text-white hover:text-brand-green transition-colors focus:outline-none z-50 relative"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="mobile-drawer"
+    >
+      <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Menú lateral para dispositivos móviles -->
+<div
+  id="mobile-drawer"
+  transition:persist="mobile-drawer"
+  class="fixed inset-y-0 right-0 w-[280px] sm:w-[320px] bg-[#f3f3f3] backdrop-blur-md z-40 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between pt-45 pb-8 px-6 border-l border-white/10"
+  aria-hidden="true"
+>
+  <nav class="flex flex-col gap-6 text-base font-medium text-brand-dark mobile-nav-links">
+    {navLinks.map((link) => <a href={link.href} data-anchor={link.anchor} class="text-brand-green border-b border-white/5 pb-2 transition-colors">{link.label}</a>)}
+    <a href={section('#contact-form')} data-anchor="#contact-form" class="bg-brand-green text-white px-5 py-3 rounded-lg text-center font-bold transition-all mt-4">Contacto</a>
+  </nav>
+
+  <div class="text-xs text-brand-green text-center">
+    Agrimatco Colombia S.A.S.
+  </div>
+</div>
+
+<!-- Overlay para el menú móvil -->
+<div id="drawer-overlay" transition:persist="drawer-overlay" class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+
+<!-- Redes sociales flotantes -->
+<div transition:persist="social-float" class="fixed right-2 top-1/2 -translate-y-1/2 md:flex flex-col gap-4 z-50 p-3 rounded-lg">
+  <div class="bg-gray-300/10 backdrop-blur-sm p-1.5 rounded-lg flex flex-col gap-3 border border-white/10 shadow-lg shadow-emerald-950/20">
+    <a href="https://www.facebook.com/agrimatco" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-brand-green transition-colors" aria-label="Facebook de Agrimatco">
+      <img src={FacebookLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
+    </a>
+    <a href="https://www.instagram.com/agrimatco" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-brand-green transition-colors" aria-label="Instagram de Agrimatco">
+      <img src={InstagramLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
+    </a>
+  </div>
+</div>
+
+<!-- Botón flotante de WhatsApp -->
+<a
+  transition:persist="whatsapp-float"
+  href="https://wa.me/573000000000"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20ba5a] text-white p-2.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:-translate-y-1 flex items-center justify-center group"
+  aria-label="Contactar por WhatsApp"
+>
+  <img src={WhatsappLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
+  <span class="absolute right-16 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none border border-gray-800">
+    ¿Necesitas asesoría?
+  </span>
+</a>
+
+<script>
+  const header = document.getElementById('main-header');
+
+  if (header) {
+    const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4';
+    const solidClasses = 'bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green';
+
+    // El header tiene `transition:persist`, así que NO se re-renderiza al
+    // navegar: hay que recalcular su aspecto en cada carga de página.
+    // Fuera de la home el fondo es claro, así que siempre va sólido — con el
+    // fondo transparente el texto blanco sería ilegible.
+    const syncHeader = () => {
+      const isHome = window.location.pathname === '/';
+      const isScrolled = !isHome || window.scrollY > 350;
+      header.dataset.overlay = isHome ? 'true' : 'false';
+      overlayClasses.split(' ').forEach((c) => header.classList.toggle(c, !isScrolled));
+      solidClasses.split(' ').forEach((c) => header.classList.toggle(c, isScrolled));
+
+      // El header y el drawer tienen `transition:persist`, así que sobreviven
+      // al cambio de página con los `href` que renderizó la home, que son
+      // anclas desnudas. En la galería un `#servicios` se resuelve contra la
+      // URL actual y produce `/gallery/#servicios`, donde no hay nada. Se
+      // recalcula la ruta en cada carga. Se lee de `data-anchor` y no del
+      // `href` para que funcione con el DOM de cualquiera de las dos páginas.
+      document
+        .querySelectorAll<HTMLAnchorElement>('#main-header [data-anchor], #mobile-drawer [data-anchor]')
+        .forEach((a) => {
+          const anchor = a.dataset.anchor;
+          if (anchor) a.href = isHome ? anchor : '/' + anchor;
+        });
+    };
+
+    window.addEventListener('scroll', syncHeader, { passive: true });
+    document.addEventListener('astro:page-load', syncHeader);
+    syncHeader();
+
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileDrawer = document.getElementById('mobile-drawer');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const navLinks = document.querySelectorAll('.mobile-nav-links a');
+
+    if (menuToggle && mobileDrawer && drawerOverlay && hamburgerIcon && closeIcon) {
+      const setOpen = (open: boolean) => {
+        mobileDrawer.classList.toggle('translate-x-full', !open);
+        mobileDrawer.setAttribute('aria-hidden', String(!open));
+        menuToggle.setAttribute('aria-expanded', String(open));
+        drawerOverlay.classList.toggle('hidden', !open);
+        drawerOverlay.classList.toggle('opacity-0', !open);
+        hamburgerIcon.classList.toggle('hidden', open);
+        closeIcon.classList.toggle('hidden', !open);
+        document.body.style.overflow = open ? 'hidden' : '';
+      };
+
+      const toggleMenu = () => {
+        setOpen(mobileDrawer.classList.contains('translate-x-full'));
+      };
+
+      menuToggle.addEventListener('click', toggleMenu);
+      drawerOverlay.addEventListener('click', toggleMenu);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mobileDrawer.classList.contains('translate-x-full')) setOpen(false);
+      });
+
+      navLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          if (!mobileDrawer.classList.contains('translate-x-full')) setOpen(false);
+        });
+      });
+    }
+  }
+</script>

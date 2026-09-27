@@ -1,17 +1,51 @@
 ---
+import { getImage } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import Gallery from '../components/gallery/Gallery.astro';
+import Lightbox from '../components/gallery/Lightbox.astro';
+import { gallery, asset, type GalleryEntry } from '../data/gallery';
+
+const items: GalleryEntry[] = await Promise.all(
+  gallery.map(async (item) => {
+    // Versión grande y liviana para el lightbox. WebP quality 80.
+    const full = await getImage({
+      src: asset(item.type === 'video' ? (item.poster ?? item.file) : item.file),
+      width: 1600,
+      format: 'webp',
+    });
+
+    return {
+      ...item,
+      fullSrc: full.src,
+      fullWidth: full.attributes.width,
+      fullHeight: full.attributes.height,
+    };
+  })
+);
 ---
-<Layout title="Galeria | Agrimatco">
-    <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4 grid-rows-auto">
-        <div 
-        class="
-        col-span-2 row-span-1 bg-gray-200 rounded-lg shadow-md overflow-hidden
-        "
-        
-        ></div>
-        <div class="bg-gray-200 rounded-lg shadow-md overflow-hidden"></div>
-        <div class="bg-gray-200 rounded-lg shadow-md overflow-hidden"></div>
-        <div class="bg-gray-200 rounded-lg shadow-md overflow-hidden"></div>
-        <div class="bg-gray-200 rounded-lg shadow-md overflow-hidden"></div>
+
+<Layout
+  title="Galería | Agrimatco"
+  description="Fotos y videos de la línea Cultivar de Agrimatco: parcelas de prueba, asesoría técnica y aplicación de fertilizante en campo en Colombia."
+>
+  <main class="pt-28 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header class="mb-10 md:mb-14">
+        <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+          AGRIMATCO
+        </span>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111827] tracking-tight mb-4">
+          Galería
+        </h1>
+        <p class="text-sm sm:text-base text-[#6B7280] leading-relaxed max-w-2xl">
+          Imágenes y videos de parcelas de prueba, asesoría técnica y aplicación en campo.
+          Haz clic en cualquier imagen para verla ampliada.
+        </p>
+      </header>
+
+      <Gallery items={items} />
     </div>
+  </main>
+
+  <Lightbox />
 </Layout>

@@ -1,34 +1,96 @@
 ---
+import { getImage } from 'astro:assets';
 import 'leaflet/dist/leaflet.css';
+import pinUrl from '../../assets/ui/markers/pin-agrimatco.webp';
+import mapaInvert from '../../assets/backgrounds/mapa-invert.webp';
 
-const zones = [
+// Un fondo CSS no se puede optimizar con <Image>, así que se genera una versión
+// ligera en build y se inyecta por variable CSS para que la use el ::before.
+const mapaBg = await getImage({ src: mapaInvert, width: 1920, format: 'webp' });
+
+// Una sola fuente de verdad: alimenta los marcadores del mapa y las tarjetas.
+const coverage = [
   {
-    name: 'Oriente / Norte Antioqueño',
+    department: 'Antioquia',
+    badge: 'Sede Central Medellín',
     coords: [6.35, -75.15],
-    tag: 'Sede Central Medellín',
-    desc: 'Cobertura técnica en las zonas productoras clave de hortalizas, flores, papa y aguacate.',
+    subregions: [
+      {
+        name: 'Oriente 1',
+        coords: [6.2, -75.37],
+        towns: ['La Unión', 'Abejorral', 'La Ceja', 'El Carmen', 'Sonsón'],
+      },
+      {
+        name: 'Oriente 2',
+        coords: [6.27, -75.37],
+        towns: ['Guarne', 'San Vicente', 'Marinilla', 'Santuario', 'El Peñol', 'Rionegro'],
+      },
+      {
+        name: 'Norte',
+        coords: [6.86, -75.37],
+        towns: ['Santa Rosa', 'Yarumal', 'Entrerríos', 'San Pedro', 'Angostura'],
+      },
+    ],
   },
   {
-    name: 'Sumapaz, Cundinamarca',
+    department: 'Cundinamarca',
+    badge: 'Región Central',
     coords: [4.15, -74.35],
-    tag: 'Región Central',
-    desc: 'Presencia, distribución activa y asesoramiento directo a través de los almacenes líderes de la provincia.',
+    subregions: [
+      {
+        name: 'Sumapaz',
+        coords: [4.6, -74.26],
+        towns: ['Sibaté', 'Fusagasugá', 'Subía', 'Silvania', 'Pasca'],
+      },
+      {
+        name: 'Sabana',
+        coords: [4.75, -74.27],
+        towns: ['Mosquera', 'Subachoque', 'Facatativá'],
+      },
+    ],
   },
   {
-    name: 'Neiva, Huila',
+    department: 'Huila',
+    badge: 'Región Sur',
     coords: [2.93, -75.28],
-    tag: 'Región Sur',
-    desc: 'Cobertura técnica y comercial optimizada para atender de manera eficiente los cultivos locales de la zona.',
+    subregions: [
+      {
+        name: 'Neiva y municipios aledaños',
+        coords: [2.56, -75.67],
+        towns: ['Neiva', 'Rivera', 'Pitalito'],
+      },
+    ],
   },
 ];
 
+// Tamaño del pin en pantalla. El asset (80x132) tiene ratio 0.6061, así que
+// la altura se calcula como ancho / 0.6061: 26 / 0.6061 = 42.9 -> 43.
+// Si cambias PIN_W, reajusta PIN_H o el pin se deforma.
+const PIN_W = 26;
+const PIN_H = 43;
 
+const config = {
+  pin: pinUrl.src,
+  pinW: PIN_W,
+  pinH: PIN_H,
+  zoomForSubregions: 7,
+  coverage,
+};
 ---
 
-<section id="cobertura" class="relative bg-white py-16 md:py-24 overflow-hidden scroll-mt-10">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section
+  id="cobertura"
+  class="relative before:absolute before:inset-0
+            before:bg-[image:var(--coverage-bg)] before:content-[''] before:bg-cover before:bg-center before:bg-no-repeat
+            before:opacity-70 py-16 md:py-24 overflow-hidden scroll-mt-10"
+  style={`--coverage-bg: url(${mapaBg.src})`}
+>
+  <div class="absolute bottom-0 left-0 w-full h-60 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-0"></div>
+  <div class="absolute top-0 left-0 w-full h-60 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-0"></div>
 
-    <div class="max-w-2xl mb-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+    <div class="max-w-2xl mb-12">
       <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
         Expansión Estratégica
       </span>
@@ -41,62 +103,295 @@ const zones = [
     <div id="coverage-map" class="w-full h-[420px] rounded-2xl border border-gray-100 shadow-sm mb-10"></div>
 
     <!-- Tarjetas (misma data que el mapa) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {zones.map((z) => (
-        <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
-            <h3 class="text-base font-bold text-[#111827]">{z.name}</h3>
-            <span class="px-2 py-1 rounded bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase">
-              {z.tag}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {coverage.map((dep) => (
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-5">
+            <div class="flex items-center gap-2.5">
+              <div class="w-3 h-3 rounded-full bg-brand-green"></div>
+              <h3 class="text-lg font-bold text-[#111827]">{dep.department}</h3>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-wide uppercase whitespace-nowrap">
+              {dep.badge}
             </span>
           </div>
-          <p class="text-xs sm:text-sm text-[#4B5563]">{z.desc}</p>
+
+          <div class="space-y-4">
+            {dep.subregions.map((sub) => (
+              <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                <h4 class="text-xs font-bold text-[#111827] uppercase tracking-wide mb-2">{sub.name}</h4>
+                <div class="flex flex-wrap gap-1.5">
+                  {sub.towns.map((town) => (
+                    <span class="text-[11px] font-medium text-[#4B5563] bg-white border border-gray-200 rounded-full px-2.5 py-1">
+                      {town}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
   </div>
 </section>
 
-<script is:inline define:vars={{ zones }}>
-  import L from 'leaflet';
+<script type="application/json" id="coverage-config" set:html={JSON.stringify(config)} is:inline />
 
-  const colombiaBounds = L.latLngBounds([[-4.5, -82.5], [13.5, -66.5]]);
-
-  const map = L.map('coverage-map', {
-    scrollWheelZoom: false,
-    dragging: true,
-    touchZoom: true,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    maxBounds: colombiaBounds,
-    maxBoundsViscosity: 1.0,
-    minZoom: 6,
-    maxZoom: 8,
-  }).setView([5.0, -75.0], 6.3);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 18,
-  }).addTo(map);
-
-  function brandIcon() {
-    return L.divIcon({
-      html: `<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
-        <path d="M16 0C7.2 0 0 7.2 0 16c0 11 16 24 16 24s16-13 16-24c0-8.8-7.2-16-16-16z"
-              fill="#007A48" stroke="white" stroke-width="2"/>
-        <path d="M20 13c-2 3-5 3.5-7.5 2.5 1 2.5 3.5 4 6 3.5.5-2 1-4.5 1.5-6z" fill="white"/>
-      </svg>`,
-      className: '',
-      iconSize: [32, 40],
-      iconAnchor: [16, 40],
-      popupAnchor: [0, -38],
-    });
+<!--
+  Leaflet posiciona cada marcador con `transform: translate3d(x, y, 0)` en
+  `.leaflet-marker-icon`. Animar `transform` ahí lo movaría a la esquina 0,0.
+  Por eso la animación va en hijos anidados: Leaflet mueve el contenedor
+  exterior y nosotros animamos los hijos, que viven en su propio contexto.
+-->
+<style is:global>
+  @keyframes agrimatco-drop {
+    0% {
+      transform: translateY(var(--drop-start, -70px));
+      opacity: 0;
+    }
+    55% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    65% {
+      transform: translateY(-16px);
+    }
+    80% {
+      transform: translateY(0);
+    }
+    90% {
+      transform: translateY(-6px);
+    }
+    100% {
+      transform: translateY(0);
+    }
   }
 
-  zones.forEach((z) => {
-    L.marker(z.coords, { icon: brandIcon() })
-      .addTo(map)
-      .bindPopup(`<strong>${z.name}</strong><br>${z.desc}`);
+  @keyframes agrimatco-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.09);
+    }
+  }
+
+  .agrimatco-drop {
+    display: block;
+    --drop-start: -70px;
+    animation: agrimatco-drop 900ms cubic-bezier(0.3, 0.9, 0.4, 1) both;
+  }
+
+  /* El punto de subregión cae menos: es un elemento mucho más pequeño. */
+  .agrimatco-drop--dot {
+    --drop-start: -34px;
+  }
+
+  /* `both` deja el transform en su estado final, así que quitar la animación
+     no altera la posición. Evita que el rebote se repita al cambiar de zoom. */
+  .agrimatco-drop.is-settled {
+    animation: none;
+  }
+
+  .agrimatco-pulse {
+    display: block;
+    animation: agrimatco-pulse 2.6s ease-in-out 1s infinite;
+    transform-origin: 50% 100%;
+  }
+
+  .agrimatco-pin-img {
+    display: block;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  }
+
+  .agrimatco-dot {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    background: #00bb33;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    transform-origin: 50% 50%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .agrimatco-drop,
+    .agrimatco-pulse {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import L from 'leaflet';
+  import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
+
+  // Se guarda a nivel de módulo para poder destruirla en `astro:before-swap`.
+  let coverageMap: LeafletMap | null = null;
+
+  const initCoverageMap = () => {
+    const container = document.getElementById('coverage-map');
+    if (!container) return;
+
+    const config = JSON.parse(document.getElementById('coverage-config')?.textContent ?? '{}');
+    if (!config.coverage?.length) return;
+
+    const DROP_MS = 900;
+    const STAGGER_MS = 90;
+
+    const colombiaBounds = L.latLngBounds([
+      [-4.5, -82.5],
+      [13.5, -66.5],
+    ]);
+
+    const map = L.map('coverage-map', {      scrollWheelZoom: false,
+      dragging: true,
+      touchZoom: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      maxBounds: colombiaBounds,
+      maxBoundsViscosity: 1.0,
+      minZoom: 6,
+      maxZoom: 10,
+    }).setView([5.0, -75.0], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    let delay = 0;
+    let lastDelay = 0;
+
+    // Icono de departamento: pin de marca. Anclaje en la punta (abajo centro).
+    const departmentIcon = () =>
+      L.divIcon({
+        className: '',
+        html:
+          `<span class="agrimatco-drop" style="animation-delay:${delay}ms">` +
+          `<span class="agrimatco-pulse">` +
+          `<img class="agrimatco-pin-img" src="${config.pin}" width="${config.pinW}" height="${config.pinH}" alt="" />` +
+          `</span></span>`,
+        iconSize: [config.pinW, config.pinH],
+        iconAnchor: [config.pinW / 2, config.pinH],
+        popupAnchor: [0, -config.pinH],
+      });
+
+    // Icono de subregión: punto, centrado en su coordenada.
+    const subregionIcon = () =>
+      L.divIcon({
+        className: '',
+        html:
+          `<span class="agrimatco-drop agrimatco-drop--dot" style="animation-delay:${delay}ms">` +
+          `<span class="agrimatco-pulse agrimatco-dot"></span>` +
+          `</span>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+        popupAnchor: [0, -9],
+      });
+
+    const nextDelay = () => {
+      const current = delay;
+      lastDelay = delay;
+      delay += STAGGER_MS;
+      return current;
+    };
+
+    const townsHtml = (towns: string[]) =>
+      `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">${towns
+        .map(
+          (t) =>
+            `<span style="font-size:11px;font-weight:500;color:#4B5563;background:#fff;border:1px solid #E5E7EB;border-radius:9999px;padding:2px 8px">${t}</span>`
+        )
+        .join('')}</div>`;
+
+    // Primero los 3 pines de departamento.
+    config.coverage.forEach((dept: { department: string; badge: string; coords: [number, number]; subregions: { name: string }[] }) => {
+      const icon = departmentIcon();
+      delay = nextDelay();
+      L.marker(dept.coords, { icon, zIndexOffset: 500 })
+        .addTo(map)
+        .bindPopup(
+          `<div style="font-size:15px;font-weight:800;color:#111827">${dept.department}</div>` +
+            `<div style="font-size:11px;font-weight:700;color:#00bb33;text-transform:uppercase;letter-spacing:.04em;margin-top:2px">${dept.badge}</div>` +
+            `<div style="font-size:12px;color:#6B7280;margin-top:6px">${dept.subregions.map((s) => s.name).join(' · ')}</div>`
+        );
+    });
+
+    // Los 6 puntos de subregión solo se agregan a partir de zoom 7.
+    const subMarkers: LeafletMarker[] = [];
+    let subregionsOnMap = false;
+
+    config.coverage.forEach(
+      (dept: {
+        department: string;
+        subregions: { name: string; coords: [number, number]; towns: string[] }[];
+      }) => {
+        dept.subregions.forEach((sub) => {
+          subMarkers.push(
+            L.marker(sub.coords, { icon: subregionIcon() })
+              .bindPopup(
+                `<div style="font-size:11px;font-weight:700;color:#00bb33;text-transform:uppercase;letter-spacing:.04em">${dept.department}</div>` +
+                  `<div style="font-size:14px;font-weight:800;color:#111827;margin-top:2px">${sub.name}</div>` +
+                  townsHtml(sub.towns)
+              )
+          );
+        });
+      }
+    );
+
+    const syncSubregions = () => {
+      const shouldShow = map.getZoom() >= config.zoomForSubregions;
+      if (shouldShow === subregionsOnMap) return;
+      subregionsOnMap = shouldShow;
+
+      subMarkers.forEach((marker) => {
+        if (shouldShow) {
+          marker.addTo(map);
+        } else {
+          marker.removeFrom(map);
+        }
+      });
+    };
+
+    map.on('zoomend', syncSubregions);
+    syncSubregions();
+
+    // Cuando ya terminó la entrada, se fija el estado para que el rebote no
+    // se repita cada vez que el usuario entra y sale del zoom 7.
+    window.setTimeout(() => {
+      document
+        .querySelectorAll('#coverage-map .agrimatco-drop:not(.is-settled)')
+        .forEach((el) => el.classList.add('is-settled'));
+    }, DROP_MS + lastDelay + 200);
+
+    // Referencia para poder limpiarla antes del siguiente intercambio.
+    coverageMap = map;
+  };
+
+  // Astro reemplaza todo el <body> en cada navegación con el router de
+  // transiciones, y este script es un módulo empaquetado que solo se ejecuta
+  // una vez. Por eso hay que destruir el mapa antes de cada intercambio y
+  // reconstruirlo en la página nueva. Sin `map.remove()` se acumulan
+  // instancias y Leaflet lanza "Map container is already initialized".
+  const destroyCoverageMap = () => {
+    coverageMap?.remove();
+    coverageMap = null;
+  };
+
+  document.addEventListener('astro:before-swap', destroyCoverageMap);
+  document.addEventListener('astro:page-load', () => {
+    destroyCoverageMap();
+    initCoverageMap();
   });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCoverageMap, { once: true });
+  } else {
+    initCoverageMap();
+  }
 </script>

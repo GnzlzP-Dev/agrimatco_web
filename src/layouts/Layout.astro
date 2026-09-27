@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
 
 interface Props {
   title: string;
@@ -25,8 +28,12 @@ const { title, description } = Astro.props;
   <link rel="icon" type="image/png+xml" href="/logo-ico.ico" />
 
   <title>{title}</title>
+  <ClientRouter />
+
 </head>
 <body class="bg-[#F9FAFB] text-brand-dark font-sans antialiased selection:bg-brand-green selection:text-white">
+  <Header />
   <slot />
+  <Footer />
 </body>
 </html>

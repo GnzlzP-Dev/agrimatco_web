@@ -1,0 +1,186 @@
+---
+/**
+ * Visor ampliado. Usa <dialog> nativo: focus trap, Esc y semántica vienen gratis,
+ * sin librerías. El contenido se inyecta desde #gallery-data, que emite Gallery.astro.
+ */
+---
+
+<dialog
+  id="gallery-lightbox"
+  class="m-auto w-full max-w-[min(96vw,1200px)] max-h-[92vh] p-0 bg-transparent backdrop:bg-black/90 backdrop:backdrop-blur-sm overflow-visible"
+  aria-label="Vista ampliada"
+>
+  <div class="relative flex flex-col items-center">
+    <button
+      type="button"
+      data-lightbox-close
+      class="absolute -top-12 right-0 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      aria-label="Cerrar"
+    >
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div data-lightbox-body class="max-h-[92vh] w-full overflow-hidden rounded-xl bg-gray-900 shadow-2xl">
+      <img data-lightbox-img src="" alt="" class="max-h-[92vh] w-full object-contain" hidden />
+      <div data-lightbox-video class="aspect-video w-full" hidden></div>
+    </div>
+
+    <div class="mt-3 flex w-full items-center justify-between gap-4 text-white">
+      <p data-lightbox-caption class="text-sm font-medium"></p>
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          data-lightbox-prev
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label="Anterior"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <span data-lightbox-counter class="text-xs tabular-nums opacity-80"></span>
+        <button
+          type="button"
+          data-lightbox-next
+          class="flex h-9 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label="Siguiente"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  type Item = {
+    type: string;
+    videoId: string | null;
+    title: string;
+    alt: string;
+    fullSrc: string;
+    fullWidth: number;
+    fullHeight: number;
+  };
+
+  const initLightbox = () => {
+    const dialog = document.getElementById('gallery-lightbox') as HTMLDialogElement | null;
+    if (!dialog) return;
+
+    const items: Item[] = JSON.parse(document.getElementById('gallery-data')?.textContent ?? '[]');
+    if (items.length === 0) return;
+
+    // `astro:page-load` también dispara en la carga inicial, así que esta
+    // función puede llegar a correr dos veces sobre el mismo DOM. Sin esta
+    // guarda el click de una imagen abriría el visor varias veces.
+    if (dialog.dataset.bound === 'true') return;
+    dialog.dataset.bound = 'true';
+
+    const img = dialog.querySelector('[data-lightbox-img]') as HTMLImageElement;
+    const video = dialog.querySelector('[data-lightbox-video]') as HTMLDivElement;
+    const caption = dialog.querySelector('[data-lightbox-caption]') as HTMLParagraphElement;
+    const counter = dialog.querySelector('[data-lightbox-counter]') as HTMLSpanElement;
+
+    let current = 0;
+
+    const render = (index: number) => {
+      current = (index + items.length) % items.length;
+      const item = items[current];
+      const isVideo = item.type === 'video' && item.videoId;
+
+      if (isVideo) {
+        img.hidden = true;
+        img.removeAttribute('src');
+        video.hidden = false;
+        video.innerHTML = `
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/${item.videoId}?rel=0&modestbranding=1&autoplay=1"
+            title="${item.title.replace(/"/g, '&quot;')}"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+            class="h-full w-full border-0"
+          ></iframe>`;
+      } else {
+        video.hidden = true;
+        video.innerHTML = '';
+        img.hidden = false;
+        img.src = item.fullSrc;
+        img.alt = item.alt;
+        img.width = item.fullWidth;
+        img.height = item.fullHeight;
+      }
+
+      caption.textContent = item.title;
+      counter.textContent = `${current + 1} / ${items.length}`;
+    };
+
+    const open = (index: number) => {
+      render(index);
+      dialog.showModal();
+    };
+
+    const close = () => {
+      video.innerHTML = ''; // Detiene el video al cerrar
+      img.removeAttribute('src');
+      dialog.close();
+    };
+
+    document.querySelectorAll('[data-gallery-open]').forEach((trigger) => {
+      trigger.addEventListener('click', () => open(Number(trigger.getAttribute('data-gallery-open'))));
+    });
+
+    dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
+    dialog.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => render(current - 1));
+    dialog.querySelector('[data-lightbox-next]')?.addEventListener('click', () => render(current + 1));
+
+    // Clic fuera del contenido cierra.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) close();
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') render(current - 1);
+      if (event.key === 'ArrowRight') render(current + 1);
+    });
+  };
+
+  // Navegación por teclado entre tiles, foco visible.
+  const bindTileKeys = () => {
+    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-gallery-open]'));
+    if (triggers.length === 0) return;
+    if (triggers[0].dataset.keysBound === 'true') return;
+    triggers[0].dataset.keysBound = 'true';
+
+    triggers.forEach((trigger, i) => {
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        const next = (i + (event.key === 'ArrowRight' ? 1 : -1) + triggers.length) % triggers.length;
+        triggers[next].focus();
+      });
+    });
+  };
+
+  const initGalleryUI = () => {
+    initLightbox();
+    bindTileKeys();
+  };
+
+  // El <body> se reemplaza entero en cada navegación y este script es un módulo
+  // empaquetado que solo corre una vez: hay que re-enganchar todo en cada
+  // carga de página.
+  document.addEventListener('astro:page-load', initGalleryUI);
+
+  // Si el visor quedó abierto, se cierra para no dejar un <dialog> huérfano
+  // en un DOM que va a desaparecer.
+  document.addEventListener('astro:before-swap', () => {
+    const dialog = document.getElementById('gallery-lightbox') as HTMLDialogElement | null;
+    if (dialog?.open) dialog.close();
+  });
+
+  initGalleryUI();
+</script>

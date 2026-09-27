@@ -1,11 +1,16 @@
 ---
+import { Image } from 'astro:assets';
+import groundNature from '../../assets/backgrounds/ground-nature.jpeg';
 ---
 <section class="relative bg-brand-dark py-12 md:py-16 overflow-hidden">
   <div class="absolute inset-0 z-0">
-    <img
-      src="/ground-nature.jpeg"
+    <Image
+      src={groundNature}
       alt=""
       aria-hidden="true"
+      widths={[640, 960, 1280]}
+      sizes="100vw"
+      loading="lazy"
       class="w-full h-full object-cover object-center opacity-20"
     />
     <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/95 to-brand-dark/80"></div>

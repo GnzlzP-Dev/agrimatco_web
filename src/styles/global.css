@@ -1,20 +1,23 @@
 @import "tailwindcss";
 
 /* 1. Registrar Rubik Variable */
+/* WOFF2 primero: 108 KB en vez de 348 KB (-69%). El TTF queda de respaldo
+   para navegadores muy antiguos. La dupa que había (misma URL dos veces) fuera. */
 @font-face {
   font-family: 'Rubik';
-  src: url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/Rubik-VariableFont_wght.woff2') format('woff2'),
+       url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 /* 2. Registrar Unbounded Variable */
+/* 253 KB en vez de 759 KB (-67%). */
 @font-face {
   font-family: 'Unbounded';
-  src: url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/Unbounded-VariableFont_wght.woff2') format('woff2'),
+       url('/fonts/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;

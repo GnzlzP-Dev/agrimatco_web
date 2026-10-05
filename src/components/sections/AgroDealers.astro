@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import bgstore from '../../assets/backgrounds/bg-dealer.jpg'
 const benefits = [
   {
     title: 'Precios y Volumen Preferencial',
@@ -16,7 +18,16 @@ const benefits = [
 ---
 
 <section id="agrotiendas" class="relative bg-white py-16 md:py-24 border-t border-gray-100 scroll-mt-10">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <Image
+    src={bgstore}
+    alt="Agrotienda con productos de nutrición vegetal Cultivar paste"
+    aria-hidden="true"
+    widths={[640, 960, 1280, 1920]}
+    sizes="100vw"
+    loading="lazy"
+    class="absolute inset-0 w-full h-full object-cover object-center opacity-20 z-0"
+  />
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 relative">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
       <div class="lg:col-span-5">
@@ -24,13 +35,13 @@ const benefits = [
           Para Distribuidores
         </span>
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight mb-4">
-          ¿Tienes una Agrotienda? Conviértete en Aliado Amcopaste
+          ¿Tienes una Agrotienda? Conviértete en Aliado Cultivar paste
         </h2>
         <p class="text-sm sm:text-base text-[#6B7280] leading-relaxed mb-6">
           Buscamos agrotiendas comprometidas con llevar tecnología de calidad al agricultor de su municipio. Si ya tienes clientela agrícola activa, hablemos de cómo distribuir la línea Cultivar en tu zona.
         </p>
         <a
-          href="https://wa.me/573000000000?text=Hola%2C%20tengo%20una%20agrotienda%20y%20quiero%20informaci%C3%B3n%20para%20ser%20distribuidor"
+          href="https://wa.me/573122278303?text=Hola%2C%20tengo%20una%20agrotienda%20y%20quiero%20informaci%C3%B3n%20para%20ser%20distribuidor"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-brand-green hover:bg-[#00633a] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-lg hover:-translate-y-0.5 group"

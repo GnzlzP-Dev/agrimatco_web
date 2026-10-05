@@ -72,7 +72,7 @@ export const gallery: GalleryItem[] = [
     file: 'demo-producto.jpg',
     poster: 'poster-demo.jpg',
     videoId: 'aqz-KE-bpKQ',
-    alt: 'Video de la aplicación de Amcopaste en campo',
-    title: 'Amcopaste en acción',
+    alt: 'Video de la aplicación de Cultivar paste en campo',
+    title: 'Cultivar paste en acción',
   },
 ];

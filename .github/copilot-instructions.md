@@ -24,7 +24,7 @@ src/
 │   ├── Hero.astro           # Landing section with CTA
 │   ├── Features.astro       # Service pillars (3 columns)
 │   ├── Coverage.astro       # Geographic coverage
-│   ├── Products.astro       # Amcopaste product line (4 variants)
+│   ├── Products.astro       # Cultivar paste product line (4 variants)
 │   ├── FAQ.astro           # Frequently asked questions
 │   └── Footer.astro        # Footer with contact & map
 ├── layouts/

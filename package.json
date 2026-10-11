@@ -9,12 +9,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "gallery:optimize": "node scripts/optimize-gallery-images.mjs"
+    "astro": "astro"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",
     "astro": "^7.0.7",
+    "astro-cloudinary": "^1.4.0",
     "leaflet": "^1.9.4",
     "tailwindcss": "^4.3.2"
   },

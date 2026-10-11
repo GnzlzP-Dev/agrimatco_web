@@ -1,32 +1,44 @@
 ---
-import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
 import Layout from '../layouts/Layout.astro';
 import Gallery from '../components/gallery/Gallery.astro';
 import Lightbox from '../components/gallery/Lightbox.astro';
-import { gallery, asset, type GalleryEntry } from '../data/gallery';
+import { cloudinaryImageUrl, type GalleryEntry } from '../data/gallery';
 
-const items: GalleryEntry[] = await Promise.all(
-  gallery.map(async (item) => {
-    // Versión grande y liviana para el lightbox. WebP quality 80.
-    const full = await getImage({
-      src: asset(item.type === 'video' ? (item.poster ?? item.file) : item.file),
-      width: 1600,
-      format: 'webp',
-    });
+const assets = await getCollection('agrimatco');
 
-    return {
-      ...item,
-      fullSrc: full.src,
-      fullWidth: full.attributes.width,
-      fullHeight: full.attributes.height,
-    };
-  })
-);
+const humanize = (value: string) =>
+  value
+    .split('/')
+    .pop()
+    ?.replace(/\.[^.]+$/, '')
+    .replace(/[-_]+/g, ' ')
+    .trim() || value;
+
+const items: GalleryEntry[] = assets.map(({ data }) => {
+  const fallback = humanize(data.display_name ?? data.public_id);
+  const alt = data.context?.custom?.alt?.trim() || fallback;
+  const title = data.context?.custom?.caption?.trim() || alt;
+  const fullWidth = Math.min(1600, data.width);
+  const fullHeight = Math.round((fullWidth * data.height) / data.width);
+
+  return {
+    secureUrl: data.secure_url,
+    alt,
+    title,
+    width: data.width,
+    height: data.height,
+    fullSrc: cloudinaryImageUrl(data.secure_url, fullWidth),
+    fullWidth,
+    fullHeight,
+  };
+});
 ---
 
 <Layout
   title="Galería | Agrimatco"
-  description="Fotos y videos de la línea Cultivar de Agrimatco: parcelas de prueba, asesoría técnica y aplicación de fertilizante en campo en Colombia."
+  description="Fotos de la línea Cultivar de Agrimatco: parcelas de prueba, asesoría técnica y aplicación de fertilizante en campo en Colombia."
 >
   <main class="pt-28 pb-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,7 +50,7 @@ const items: GalleryEntry[] = await Promise.all(
           Galería
         </h1>
         <p class="text-sm sm:text-base text-[#6B7280] leading-relaxed max-w-2xl">
-          Imágenes y videos de parcelas de prueba, asesoría técnica y aplicación en campo.
+          Imágenes de parcelas de prueba, asesoría técnica y aplicación en campo.
           Haz clic en cualquier imagen para verla ampliada.
         </p>
       </header>

@@ -28,8 +28,6 @@ The application will be available at `http://localhost:3000`
 src/
 ├── assets/              # Imágenes que Astro optimiza (AVIF/WebP + srcset)
 │   ├── backgrounds/     # Fotos de fondo (hero, banner, mapa)
-│   ├── gallery/         # Fotos de la galería
-│   │   └── posters/     # Posters de los videos de YouTube
 │   ├── products/        # PNG de la línea Cultivar
 │   └── ui/
 │       ├── brand/       # Logos
@@ -37,18 +35,16 @@ src/
 │       └── socials/     # Íconos de redes sociales
 ├── components/
 │   ├── layout/          # Header, Footer
-│   ├── gallery/         # Gallery, GalleryTile, Lightbox
+│   ├── gallery/         # Gallery, Lightbox
 │   ├── sections/        # Bloques de la landing
 │   └── ui/              # Piezas reusables
-├── data/                # Datos tipados (gallery.ts)
+├── data/                # Helpers para URLs de Cloudinary
 ├── layouts/             # Layouts reutilizables
 ├── pages/               # Rutas del sitio
 └── styles/              # Tailwind + tokens de marca
 
 public/                  # Solo lo que NO se procesa: favicon, fuentes, robots.txt
 _archive/                # Material sin uso. Queda en git pero NO se despliega
-scripts/                 # Utilidades de desarrollo
-incoming/                # Fotos crudas del cliente (no se commitea)
 ```
 
 > `_archive/` está fuera de `public/` a propósito: Astro copia `public/` a
@@ -62,8 +58,6 @@ incoming/                # Fotos crudas del cliente (no se commitea)
 | Fotos de contenido | `src/assets/` | ✅ AVIF/WebP + `srcset` |
 | Fondos pesados | `src/assets/` + `<Image>` | ✅ |
 | Fondo CSS (`::before`) | `src/assets/` + `getImage()` + variable CSS | ✅ (ver nota) |
-| Videos | YouTube no listado | Solo el poster se optimiza |
-| Posters de video | `src/assets/gallery/posters/` | ✅ |
 | Favicon, fuentes, PDFs | `public/` | ❌ por URL |
 
 > ⚠️ **Fondos CSS:** `<Image>` no funciona en `background-image`. Se optimizan
@@ -88,23 +82,45 @@ Tras cambiar una fuente, reconvertir:
 node -e "const w=require('wawoff2'),f=require('fs');w.compress(f.readFileSync('public/fonts/Rubik-VariableFont_wght.ttf')).then(b=>f.writeFileSync('public/fonts/Rubik-VariableFont_wght.woff2',b))"
 ```
 
-## 🖼️ Cómo agregar fotos a la galería
+## 🖼️ Galería desde Cloudinary
 
-1. El cliente deja las fotos crudas en `incoming/`
-2. `npm run gallery:optimize` → las comprime a máx. 2000 px / JPEG 80 en `src/assets/gallery/`
-3. Declaras cada imagen en `src/data/gallery.ts`:
+La página `/gallery` obtiene imágenes de la carpeta `AGRIMATCO` de Cloudinary.
+No es necesario copiar imágenes a `src/assets/gallery/` ni declararlas en un archivo.
+Al subir imágenes a esa carpeta, aparecerán en la galería al volver a generar el sitio.
+Para personalizar el texto accesible, añade el contexto `alt` en los metadatos de la imagen;
+el contexto `caption` se usa como título visible y, si falta, se reutiliza el texto alternativo.
 
-```ts
-{
-  type: 'image',
-  file: 'nombre-archivo.jpg',   // el de la carpeta gallery/
-  alt: 'Descripción obligatoria para accesibilidad y SEO',
-  title: 'Texto que se ve en el lightbox',  // opcional
-}
+El loader necesita estas credenciales en un archivo `.env` en la raíz del proyecto:
+
+```env
+PUBLIC_CLOUDINARY_CLOUD_NAME=tu_cloud_name
+PUBLIC_CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
 ```
 
-4. Para un video: súbelo a YouTube como **no listado**, pon el poster en
-   `src/assets/gallery/posters/` y declara `type: 'video'` con `videoId` y `poster`.
+No compartas ni publiques `CLOUDINARY_API_SECRET`. Configura las mismas variables en el
+entorno de build de Netlify. La galería lista hasta 500 imágenes de esa carpeta.
+
+## 📤 Portal de carga para el cliente
+
+La página `/upload` usa el widget de carga de `astro-cloudinary` para seleccionar y cargar
+imágenes directamente a Cloudinary. No aparece en la navegación del sitio. Añade a `.env`
+la variable pública del preset sin firma:
+
+```env
+PUBLIC_CLOUDINARY_UPLOAD_PRESET=nombre_del_preset
+```
+
+En Cloudinary crea un upload preset **unsigned** dedicado para el cliente y configúralo para
+guardar en `AGRIMATCO`. El widget permite imágenes JPG, PNG, WebP y AVIF, hasta 10 MB cada una
+y 20 por selección. Configura también esos límites en el preset; las opciones del widget son
+una ayuda de interfaz, no un control de seguridad. Para asignar un nombre distinto a cada
+imagen, usa el campo **ID público** de **Opciones avanzadas** del widget.
+
+`/upload` no tiene login: `noindex` y no incluir el enlace en el menú no restringen el acceso.
+Cualquier persona que consiga el enlace puede cargar archivos usando el preset público.
+Para proteger el acceso se necesita añadir autenticación. Los archivos aparecen en la galería
+después de una nueva publicación del sitio, porque la galería se genera durante el build.
 
 ### Deploy por lotes
 
@@ -124,7 +140,6 @@ Los Deploy Previews son ilimitados y gratis: itera en ramas de PR sin costo.
 | `npm run dev` | Start development server |
 | `npm run build` | Build for production |
 | `npm run preview` | Preview production build locally |
-| `npm run gallery:optimize` | Comprime `incoming/` hacia `src/assets/gallery/` |
 | `npm run astro ...` | Run Astro CLI commands |
 
 ## 🎨 Styling

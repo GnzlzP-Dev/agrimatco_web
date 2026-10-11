@@ -24,7 +24,6 @@
 
     <div data-lightbox-body class="max-h-[92vh] w-full overflow-hidden rounded-xl bg-gray-900 shadow-2xl">
       <img data-lightbox-img src="" alt="" class="max-h-[92vh] w-full object-contain" hidden />
-      <div data-lightbox-video class="aspect-video w-full" hidden></div>
     </div>
 
     <div class="mt-3 flex w-full items-center justify-between gap-4 text-white">
@@ -58,8 +57,6 @@
 
 <script>
   type Item = {
-    type: string;
-    videoId: string | null;
     title: string;
     alt: string;
     fullSrc: string;
@@ -81,7 +78,6 @@
     dialog.dataset.bound = 'true';
 
     const img = dialog.querySelector('[data-lightbox-img]') as HTMLImageElement;
-    const video = dialog.querySelector('[data-lightbox-video]') as HTMLDivElement;
     const caption = dialog.querySelector('[data-lightbox-caption]') as HTMLParagraphElement;
     const counter = dialog.querySelector('[data-lightbox-counter]') as HTMLSpanElement;
 
@@ -90,29 +86,11 @@
     const render = (index: number) => {
       current = (index + items.length) % items.length;
       const item = items[current];
-      const isVideo = item.type === 'video' && item.videoId;
-
-      if (isVideo) {
-        img.hidden = true;
-        img.removeAttribute('src');
-        video.hidden = false;
-        video.innerHTML = `
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/${item.videoId}?rel=0&modestbranding=1&autoplay=1"
-            title="${item.title.replace(/"/g, '&quot;')}"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowfullscreen
-            class="h-full w-full border-0"
-          ></iframe>`;
-      } else {
-        video.hidden = true;
-        video.innerHTML = '';
-        img.hidden = false;
-        img.src = item.fullSrc;
-        img.alt = item.alt;
-        img.width = item.fullWidth;
-        img.height = item.fullHeight;
-      }
+      img.hidden = false;
+      img.src = item.fullSrc;
+      img.alt = item.alt;
+      img.width = item.fullWidth;
+      img.height = item.fullHeight;
 
       caption.textContent = item.title;
       counter.textContent = `${current + 1} / ${items.length}`;
@@ -124,7 +102,6 @@
     };
 
     const close = () => {
-      video.innerHTML = ''; // Detiene el video al cerrar
       img.removeAttribute('src');
       dialog.close();
     };

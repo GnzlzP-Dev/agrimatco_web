@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+
+import ambassador from '../../assets/brands-logos/logo-ambassador.png';
+import amcocrops from '../../assets/brands-logos/logo-amcocrops.png';
+import borocal from '../../assets/brands-logos/logo-borocalPLUS.png';
+import calcibor from '../../assets/brands-logos/logo-calcibor.png';
+import cultivar from '../../assets/brands-logos/logo-cultivar.png';
+import cultivarKTC from '../../assets/brands-logos/logo-cultivarKTC.png';
+import dragon from '../../assets/brands-logos/logo-dragon.png';
+import ferraslum from '../../assets/brands-logos/logo-ferraslum.png';
+import foliboost from '../../assets/brands-logos/logo-foliboost.png';
+import fullhume20 from '../../assets/brands-logos/logo-fullhume20.png';
+import mofcal from '../../assets/brands-logos/logo-mofcal.png';
+import mofcalGEL from '../../assets/brands-logos/logo-mofcalGEL.png';
+import multiN from '../../assets/brands-logos/logo-multiN.png';
+import superCAT45 from '../../assets/brands-logos/logo-superCAT45.png';
+import zinman from '../../assets/brands-logos/logo-zinman.png';
+
+const defaultLogos = [
+  ambassador,
+  amcocrops,
+  borocal,
+  calcibor,
+  cultivar,
+  cultivarKTC,
+  dragon,
+  ferraslum,
+  foliboost,
+  fullhume20,
+  mofcal,
+  mofcalGEL,
+  multiN,
+  superCAT45,
+  zinman
+];
+
+interface Props {
+  items?: any[];
+  speed?: string;
+}
+
+const { items = defaultLogos, speed = '80s' } = Astro.props;
+---
+<div class="bg-white relative overflow-hidden w-full py-4 marquee-container">
+  <div class="flex animate-marquee whitespace-nowrap items-center w-max">
+    <!-- Primer grupo de logos -->
+    <div class="flex items-center shrink-0">
+      {items.map((item) => (
+        <Image 
+          src={item} 
+          alt="Logo" 
+          inferSize={true} 
+          class="mx-12 h-10 w-auto object-contain" 
+        />
+      ))}
+    </div>
+    <!-- Segundo grupo idéntico para completar el bucle -->
+    <div class="flex items-center shrink-0" aria-hidden="true">
+      {items.map((item) => (
+        <Image 
+          src={item} 
+          alt="Logo" 
+          inferSize={true} 
+          class="mx-12 h-10 w-auto object-contain" 
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
+<style define:vars={{ speed }}>
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee var(--speed) linear infinite;
+  }
+
+  .marquee-container {
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
+---
+
+<ul class="space-y-1">
+  {GALLERY_CATEGORIES.map((category, index) => (
+    <li>
+      <button
+        type="button"
+        data-gallery-category={category.id}
+        aria-current={index === 0 ? 'true' : undefined}
+        class:list={[
+          'w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
+          index === 0
+            ? 'bg-brand-green/10 font-bold text-brand-green'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-brand-green',
+        ]}
+      >
+        {category.label}
+      </button>
+    </li>
+  ))}
+</ul>

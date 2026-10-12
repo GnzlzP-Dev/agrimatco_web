@@ -9,6 +9,11 @@ export type GalleryEntry = {
   fullHeight: number;
 };
 
+export type GalleryPage = {
+  items: GalleryEntry[];
+  nextCursor: string | null;
+};
+
 export function cloudinaryImageUrl(secureUrl: string, width: number): string {
   if (!Number.isInteger(width) || width < 1) {
     throw new Error(`[gallery] Ancho de transformación Cloudinary inválido: ${width}`);

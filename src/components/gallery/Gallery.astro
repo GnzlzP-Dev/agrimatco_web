@@ -1,5 +1,6 @@
 ---
 import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
+import CategoryList from './CategoryList.astro';
 ---
 
 <div class="grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12">
@@ -10,49 +11,13 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
         <span class="float-right text-brand-green transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
       </summary>
       <nav class="mt-4" aria-label="Categorías de la galería">
-        <ul class="space-y-1">
-          {GALLERY_CATEGORIES.map((category, index) => (
-            <li>
-              <button
-                type="button"
-                data-gallery-category={category.id}
-                aria-current={index === 0 ? 'true' : undefined}
-                class:list={[
-                  'w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                  index === 0
-                    ? 'bg-brand-green/10 font-bold text-brand-green'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-brand-green',
-                ]}
-              >
-                {category.label}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <CategoryList />
       </nav>
     </details>
 
     <nav class="hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:block" aria-label="Categorías de la galería">
       <h2 class="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-400">Categorías</h2>
-      <ul class="space-y-1">
-        {GALLERY_CATEGORIES.map((category, index) => (
-          <li>
-            <button
-              type="button"
-              data-gallery-category={category.id}
-              aria-current={index === 0 ? 'true' : undefined}
-              class:list={[
-                'w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                index === 0
-                  ? 'bg-brand-green/10 font-bold text-brand-green'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-brand-green',
-              ]}
-            >
-              {category.label}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <CategoryList />
     </nav>
   </aside>
 
@@ -106,58 +71,13 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
 <script type="application/json" id="gallery-data" is:inline>[]</script>
 
 <script>
-  import { cloudinaryImageUrl } from '../../data/gallery';
+  import { cloudinaryImageUrl, type GalleryEntry, type GalleryPage } from '../../data/gallery';
   import {
     GALLERY_CATEGORIES,
     getGalleryCategory,
     isGalleryCategoryId,
     type GalleryCategoryId,
   } from '../../data/gallery-categories';
-
-  interface GalleryItem {
-    secureUrl: string;
-    alt: string;
-    title: string;
-    width: number;
-    height: number;
-    fullSrc: string;
-    fullWidth: number;
-    fullHeight: number;
-  }
-
-  interface GalleryPage {
-    items: GalleryItem[];
-    nextCursor: string | null;
-  }
-
-  const isGalleryItem = (value: unknown): value is GalleryItem =>
-    typeof value === 'object' &&
-    value !== null &&
-    'secureUrl' in value &&
-    typeof value.secureUrl === 'string' &&
-    'alt' in value &&
-    typeof value.alt === 'string' &&
-    'title' in value &&
-    typeof value.title === 'string' &&
-    'width' in value &&
-    typeof value.width === 'number' &&
-    'height' in value &&
-    typeof value.height === 'number' &&
-    'fullSrc' in value &&
-    typeof value.fullSrc === 'string' &&
-    'fullWidth' in value &&
-    typeof value.fullWidth === 'number' &&
-    'fullHeight' in value &&
-    typeof value.fullHeight === 'number';
-
-  const isGalleryPage = (value: unknown): value is GalleryPage =>
-    typeof value === 'object' &&
-    value !== null &&
-    'items' in value &&
-    Array.isArray(value.items) &&
-    value.items.every(isGalleryItem) &&
-    'nextCursor' in value &&
-    (typeof value.nextCursor === 'string' || value.nextCursor === null);
 
   const makeSkeletons = () => {
     const fragment = document.createDocumentFragment();
@@ -176,7 +96,7 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
     return fragment;
   };
 
-  const makeTile = (item: GalleryItem, index: number) => {
+  const makeTile = (item: GalleryEntry, index: number) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'mb-3 break-inside-avoid sm:mb-4';
 
@@ -236,7 +156,7 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
     }
     grid.dataset.galleryInitialized = 'true';
 
-    let items: GalleryItem[] = [];
+    let items: GalleryEntry[] = [];
     let nextCursor: string | null = null;
     let activeCategory: GalleryCategoryId = GALLERY_CATEGORIES[0].id;
     let requestId = 0;
@@ -309,10 +229,12 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
       category: GalleryCategoryId,
       cursor: string | null,
       signal: AbortSignal,
+      limit?: number,
     ): Promise<GalleryPage> => {
       const url = new URL('/api/gallery.json', window.location.origin);
       url.searchParams.set('category', category);
       if (cursor) url.searchParams.set('cursor', cursor);
+      if (limit) url.searchParams.set('limit', String(limit));
       const response = await fetch(url, {
         headers: { Accept: 'application/json' },
         signal,
@@ -325,8 +247,7 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
             : `La galería respondió con HTTP ${response.status}.`;
         throw new Error(message);
       }
-      if (!isGalleryPage(result)) throw new Error('La respuesta de imágenes de Cloudinary no es válida.');
-      return result;
+      return result as GalleryPage;
     };
 
     const preloadNavigationCovers = async (signal: AbortSignal) => {
@@ -336,7 +257,7 @@ import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
       await Promise.all(
         adjacent.map(async (category) => {
           try {
-            const page = await fetchPage(category.id, null, signal);
+            const page = await fetchPage(category.id, null, signal, 1);
             if (page.items[0] && !signal.aborted) {
               categoryCovers.set(category.id, page.items[0].secureUrl);
               renderGroupNavigation();

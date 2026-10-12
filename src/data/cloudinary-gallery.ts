@@ -1,4 +1,4 @@
-import { cloudinaryImageUrl, type GalleryEntry } from './gallery';
+import { cloudinaryImageUrl, type GalleryEntry, type GalleryPage } from './gallery';
 import { getGalleryCategory, type GalleryCategoryId } from './gallery-categories';
 
 export interface CloudinaryCredentials {
@@ -7,12 +7,7 @@ export interface CloudinaryCredentials {
   apiSecret?: string;
 }
 
-export interface CloudinaryGalleryPage {
-  items: GalleryEntry[];
-  nextCursor: string | null;
-}
-
-const PAGE_SIZE = 8;
+export const PAGE_SIZE = 24;
 const MAX_CURSOR_LENGTH = 4096;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -69,8 +64,9 @@ const parseResource = (value: unknown): GalleryEntry => {
 
 export async function getCloudinaryGallery(
   { cloudName, apiKey, apiSecret }: CloudinaryCredentials,
+  categoryId: GalleryCategoryId,
   cursor?: string | null,
-  categoryId: GalleryCategoryId = 'all',
+  limit: number = PAGE_SIZE,
 ) {
   if (!cloudName || !apiKey || !apiSecret) {
     console.error('[gallery] Faltan las credenciales de Cloudinary para actualizar la galería.');
@@ -90,14 +86,9 @@ export async function getCloudinaryGallery(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        expression: [
-          '(asset_folder="AGRIMATCO/images" OR folder="AGRIMATCO/images")',
-          ...(getGalleryCategory(categoryId).tag
-            ? [`tags=${getGalleryCategory(categoryId).tag}`]
-            : []),
-        ].join(' AND '),
+        expression: `(asset_folder="AGRIMATCO/images" OR folder="AGRIMATCO/images") AND tags=${getGalleryCategory(categoryId).tag}`,
         sort_by: [{ created_at: 'desc' }],
-        max_results: PAGE_SIZE,
+        max_results: limit,
         with_field: 'context',
         ...(cursor ? { next_cursor: cursor } : {}),
       }),
@@ -126,7 +117,7 @@ export async function getCloudinaryGallery(
       throw new Error('Cloudinary devolvió una respuesta inesperada.');
     }
 
-    const page: CloudinaryGalleryPage = {
+    const page: GalleryPage = {
       items: result.resources.map(parseResource),
       nextCursor:
         typeof result.next_cursor === 'string' && result.next_cursor.length > 0

@@ -227,15 +227,13 @@ const config = {
 
 <script>
   import L from 'leaflet';
+  import { onPageLoad } from '../../scripts/page-load';
   import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 
   // Se guarda a nivel de módulo para poder destruirla en `astro:before-swap`.
   let coverageMap: LeafletMap | null = null;
 
   const initCoverageMap = () => {
-    const container = document.getElementById('coverage-map');
-    if (!container) return;
-
     const config = JSON.parse(document.getElementById('coverage-config')?.textContent ?? '{}');
     if (!config.coverage?.length) return;
 
@@ -373,25 +371,12 @@ const config = {
     coverageMap = map;
   };
 
-  // Astro reemplaza todo el <body> en cada navegación con el router de
-  // transiciones, y este script es un módulo empaquetado que solo se ejecuta
-  // una vez. Por eso hay que destruir el mapa antes de cada intercambio y
-  // reconstruirlo en la página nueva. Sin `map.remove()` se acumulan
-  // instancias y Leaflet lanza "Map container is already initialized".
-  const destroyCoverageMap = () => {
+  // El <body> se reemplaza en cada navegación: hay que destruir el mapa antes
+  // del intercambio para no acumular instancias ni listeners de Leaflet.
+  document.addEventListener('astro:before-swap', () => {
     coverageMap?.remove();
     coverageMap = null;
-  };
-
-  document.addEventListener('astro:before-swap', destroyCoverageMap);
-  document.addEventListener('astro:page-load', () => {
-    destroyCoverageMap();
-    initCoverageMap();
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCoverageMap, { once: true });
-  } else {
-    initCoverageMap();
-  }
+  onPageLoad('#coverage-map', initCoverageMap);
 </script>

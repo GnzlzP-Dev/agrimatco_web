@@ -1,8 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import groundNature from '../../assets/backgrounds/ground-nature.jpeg';
+import { sectionHref } from '../../utils/section-href';
 
-const section = (anchor: string) => (Astro.url.pathname === '/' ? anchor : `/${anchor}`);
+const section = (anchor: string) => sectionHref(Astro.url.pathname, anchor);
 ---
 
 <section class="relative min-h-[90vh] md:min-h-screen w-full flex items-center justify-center bg-brand-dark overflow-hidden">

@@ -71,6 +71,7 @@ import CategoryList from './CategoryList.astro';
 <script type="application/json" id="gallery-data" is:inline>[]</script>
 
 <script>
+  import { onPageLoad } from '../../scripts/page-load';
   import { cloudinaryImageUrl, type GalleryEntry, type GalleryPage } from '../../data/gallery';
   import {
     GALLERY_CATEGORIES,
@@ -130,8 +131,7 @@ import CategoryList from './CategoryList.astro';
     return wrapper;
   };
 
-  const initGallery = () => {
-    const grid = document.getElementById('gallery-grid');
+  const initGallery = (grid: HTMLElement) => {
     const data = document.getElementById('gallery-data');
     const status = document.getElementById('gallery-status');
     const errorMessage = document.getElementById('gallery-error');
@@ -141,7 +141,6 @@ import CategoryList from './CategoryList.astro';
     const groupNavigation = document.getElementById('gallery-group-navigation');
     const sidebar = document.querySelector('aside');
     if (
-      !grid ||
       !data ||
       !status ||
       !errorMessage ||
@@ -149,12 +148,10 @@ import CategoryList from './CategoryList.astro';
       !title ||
       !description ||
       !groupNavigation ||
-      !sidebar ||
-      grid.dataset.galleryInitialized === 'true'
+      !sidebar
     ) {
       return;
     }
-    grid.dataset.galleryInitialized = 'true';
 
     let items: GalleryEntry[] = [];
     let nextCursor: string | null = null;
@@ -388,6 +385,5 @@ import CategoryList from './CategoryList.astro';
     void loadAllPages(requestId, requestController);
   };
 
-  document.addEventListener('astro:page-load', initGallery);
-  initGallery();
+  onPageLoad('#gallery-grid', initGallery);
 </script>

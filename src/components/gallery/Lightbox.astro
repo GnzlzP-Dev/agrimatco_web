@@ -56,6 +56,8 @@
 </dialog>
 
 <script>
+  import { onPageLoad } from '../../scripts/page-load';
+
   type Item = {
     title: string;
     alt: string;
@@ -64,16 +66,7 @@
     fullHeight: number;
   };
 
-  const initLightbox = () => {
-    const dialog = document.getElementById('gallery-lightbox') as HTMLDialogElement | null;
-    if (!dialog) return;
-
-    // `astro:page-load` también dispara en la carga inicial, así que esta
-    // función puede llegar a correr dos veces sobre el mismo DOM. Sin esta
-    // guarda el click de una imagen abriría el visor varias veces.
-    if (dialog.dataset.bound === 'true') return;
-    dialog.dataset.bound = 'true';
-
+  const initLightbox = (dialog: HTMLDialogElement) => {
     const img = dialog.querySelector('[data-lightbox-img]') as HTMLImageElement;
     const caption = dialog.querySelector('[data-lightbox-caption]') as HTMLParagraphElement;
     const counter = dialog.querySelector('[data-lightbox-counter]') as HTMLSpanElement;
@@ -132,11 +125,7 @@
   };
 
   // Navegación por teclado entre tiles, foco visible.
-  const bindTileKeys = () => {
-    const grid = document.getElementById('gallery-grid');
-    if (!grid || grid.dataset.keysBound === 'true') return;
-    grid.dataset.keysBound = 'true';
-
+  const bindTileKeys = (grid: HTMLElement) => {
     grid.addEventListener('keydown', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLElement) || !target.matches('[data-gallery-open]')) return;
@@ -150,15 +139,8 @@
     });
   };
 
-  const initGalleryUI = () => {
-    initLightbox();
-    bindTileKeys();
-  };
-
-  // El <body> se reemplaza entero en cada navegación y este script es un módulo
-  // empaquetado que solo corre una vez: hay que re-enganchar todo en cada
-  // carga de página.
-  document.addEventListener('astro:page-load', initGalleryUI);
+  onPageLoad<HTMLDialogElement>('#gallery-lightbox', initLightbox);
+  onPageLoad('#gallery-grid', bindTileKeys);
 
   // Si el visor quedó abierto, se cierra para no dejar un <dialog> huérfano
   // en un DOM que va a desaparecer.
@@ -166,6 +148,4 @@
     const dialog = document.getElementById('gallery-lightbox') as HTMLDialogElement | null;
     if (dialog?.open) dialog.close();
   });
-
-  initGalleryUI();
 </script>

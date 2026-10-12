@@ -4,19 +4,17 @@ import logo from '../../assets/ui/brand/logo-horizontal-agrimatco.png';
 import FacebookLogo from '../../assets/ui/socials/Logo_Facebook.svg';
 import InstagramLogo from '../../assets/ui/socials/Logo_Instagram.svg';
 import WhatsappLogo from '../../assets/ui/socials/Logo_WhatsappIcon.svg';
+import { sectionHref } from '../../utils/section-href';
 
 const isHome = Astro.url.pathname === '/';
-
-// En la home las secciones existen, así que basta la ancla.
-// En el resto de páginas hay que volver a la home para que la ancla resuelva.
-const section = (anchor: string) => (isHome ? anchor : `/${anchor}`);
+const section = (anchor: string) => sectionHref(Astro.url.pathname, anchor);
 
 const navLinks = [
-  { label: 'Servicios', href: isHome ? '#servicios' : '/#servicios', anchor: '#servicios' },
-  { label: 'Cobertura', href: isHome ? '#cobertura' : '/#cobertura', anchor: '#cobertura' },
-  { label: 'Productos', href: isHome ? '#productos' : '/#productos', anchor: '#productos' },
-  { label: 'FAQ', href: isHome ? '#faq' : '/#faq', anchor: '#faq' },
-  { label: 'Galería', href: '/gallery', anchor: undefined }
+  { label: 'Servicios', href: section('#servicios') },
+  { label: 'Cobertura', href: section('#cobertura') },
+  { label: 'Productos', href: section('#productos') },
+  { label: 'FAQ', href: section('#faq') },
+  { label: 'Galería', href: '/gallery' },
 ];
 
 const solidClasses = 'bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green';
@@ -25,8 +23,9 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 
 <header
   id="main-header"
-  transition:persist="site-header"
   data-overlay={isHome ? 'true' : 'false'}
+  data-overlay-classes={overlayClasses}
+  data-solid-classes={solidClasses}
   class:list={[
     'fixed top-0 left-0 w-full z-50 transition-all duration-200',
     isHome ? overlayClasses : solidClasses,
@@ -46,8 +45,8 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
     </a>
 
     <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-white">
-      {navLinks.map((link) => <a href={link.href} data-anchor={link.anchor} class="hover:text-brand-green transition-colors">{link.label}</a>)}
-      <a href={section('#contact-form')} data-anchor="#contact-form" class="bg-brand-green hover:bg-brand-green-dark text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20">Contacto</a>
+      {navLinks.map((link) => <a href={link.href} class="hover:text-brand-green transition-colors">{link.label}</a>)}
+      <a href={section('#contact-form')} class="bg-brand-green hover:bg-brand-green-dark text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20">Contacto</a>
     </nav>
 
     <button
@@ -71,13 +70,12 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 <!-- Menú lateral para dispositivos móviles -->
 <div
   id="mobile-drawer"
-  transition:persist="mobile-drawer"
   class="fixed inset-y-0 right-0 w-[280px] sm:w-[320px] bg-[#f3f3f3] backdrop-blur-md z-40 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between pt-45 pb-8 px-6 border-l border-white/10"
   aria-hidden="true"
 >
   <nav class="flex flex-col gap-6 text-base font-medium text-brand-dark mobile-nav-links">
-    {navLinks.map((link) => <a href={link.href} data-anchor={link.anchor} class="text-brand-green border-b border-white/5 pb-2 transition-colors">{link.label}</a>)}
-    <a href={section('#contact-form')} data-anchor="#contact-form" class="bg-brand-green text-white px-5 py-3 rounded-lg text-center font-bold transition-all mt-4">Contacto</a>
+    {navLinks.map((link) => <a href={link.href} class="text-brand-green border-b border-white/5 pb-2 transition-colors">{link.label}</a>)}
+    <a href={section('#contact-form')} class="bg-brand-green text-white px-5 py-3 rounded-lg text-center font-bold transition-all mt-4">Contacto</a>
   </nav>
 
   <div class="text-xs text-brand-green text-center">
@@ -86,7 +84,7 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 </div>
 
 <!-- Overlay para el menú móvil -->
-<div id="drawer-overlay" transition:persist="drawer-overlay" class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+<div id="drawer-overlay" class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
 
 <!-- Redes sociales flotantes -->
 <div transition:persist="social-float" class="fixed right-2 top-1/2 -translate-y-1/2 md:flex flex-col gap-4 z-50 p-3 rounded-lg">
@@ -116,75 +114,49 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 </a>
 
 <script>
-  const header = document.getElementById('main-header');
+  // Este script se ejecuta una sola vez, pero <ClientRouter /> reemplaza el
+  // <body> en cada navegación. Por eso no se enlaza nada a elementos concretos:
+  // los eventos van en `document`/`window` y los elementos se buscan al momento.
+  // El header ya llega bien renderizado desde el servidor (enlaces y estado de
+  // cada página), así que no hace falta recalcularlo en el navegador.
 
-  if (header) {
-    const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4';
-    const solidClasses = 'bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green';
+  const syncHeader = () => {
+    const header = document.getElementById('main-header');
+    // Fuera de la home el header es siempre sólido (el fondo es claro).
+    if (!header || header.dataset.overlay !== 'true') return;
 
-    // El header tiene `transition:persist`, así que NO se re-renderiza al
-    // navegar: hay que recalcular su aspecto en cada carga de página.
-    // Fuera de la home el fondo es claro, así que siempre va sólido — con el
-    // fondo transparente el texto blanco sería ilegible.
-    const syncHeader = () => {
-      const isHome = window.location.pathname === '/';
-      const isScrolled = !isHome || window.scrollY > 350;
-      header.dataset.overlay = isHome ? 'true' : 'false';
-      overlayClasses.split(' ').forEach((c) => header.classList.toggle(c, !isScrolled));
-      solidClasses.split(' ').forEach((c) => header.classList.toggle(c, isScrolled));
+    const scrolled = window.scrollY > 350;
+    const overlay = (header.dataset.overlayClasses ?? '').split(' ');
+    const solid = (header.dataset.solidClasses ?? '').split(' ');
+    overlay.forEach((name) => header.classList.toggle(name, !scrolled));
+    solid.forEach((name) => header.classList.toggle(name, scrolled));
+  };
 
-      // El header y el drawer tienen `transition:persist`, así que sobreviven
-      // al cambio de página con los `href` que renderizó la home, que son
-      // anclas desnudas. En la galería un `#servicios` se resuelve contra la
-      // URL actual y produce `/gallery/#servicios`, donde no hay nada. Se
-      // recalcula la ruta en cada carga. Se lee de `data-anchor` y no del
-      // `href` para que funcione con el DOM de cualquiera de las dos páginas.
-      document
-        .querySelectorAll<HTMLAnchorElement>('#main-header [data-anchor], #mobile-drawer [data-anchor]')
-        .forEach((a) => {
-          const anchor = a.dataset.anchor;
-          if (anchor) a.href = isHome ? anchor : '/' + anchor;
-        });
-    };
+  const isDrawerOpen = () =>
+    document.getElementById('menu-toggle')?.getAttribute('aria-expanded') === 'true';
 
-    window.addEventListener('scroll', syncHeader, { passive: true });
-    document.addEventListener('astro:page-load', syncHeader);
-    syncHeader();
+  const setDrawerOpen = (open: boolean) => {
+    document.getElementById('mobile-drawer')?.classList.toggle('translate-x-full', !open);
+    document.getElementById('mobile-drawer')?.setAttribute('aria-hidden', String(!open));
+    document.getElementById('menu-toggle')?.setAttribute('aria-expanded', String(open));
+    document.getElementById('drawer-overlay')?.classList.toggle('hidden', !open);
+    document.getElementById('drawer-overlay')?.classList.toggle('opacity-0', !open);
+    document.getElementById('hamburger-icon')?.classList.toggle('hidden', open);
+    document.getElementById('close-icon')?.classList.toggle('hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
 
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileDrawer = document.getElementById('mobile-drawer');
-    const drawerOverlay = document.getElementById('drawer-overlay');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    const closeIcon = document.getElementById('close-icon');
-    const navLinks = document.querySelectorAll('.mobile-nav-links a');
+  window.addEventListener('scroll', syncHeader, { passive: true });
+  document.addEventListener('astro:page-load', syncHeader);
+  syncHeader();
 
-    if (menuToggle && mobileDrawer && drawerOverlay && hamburgerIcon && closeIcon) {
-      const setOpen = (open: boolean) => {
-        mobileDrawer.classList.toggle('translate-x-full', !open);
-        mobileDrawer.setAttribute('aria-hidden', String(!open));
-        menuToggle.setAttribute('aria-expanded', String(open));
-        drawerOverlay.classList.toggle('hidden', !open);
-        drawerOverlay.classList.toggle('opacity-0', !open);
-        hamburgerIcon.classList.toggle('hidden', open);
-        closeIcon.classList.toggle('hidden', !open);
-        document.body.style.overflow = open ? 'hidden' : '';
-      };
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest('#menu-toggle, #drawer-overlay')) setDrawerOpen(!isDrawerOpen());
+    else if (isDrawerOpen() && event.target.closest('.mobile-nav-links a')) setDrawerOpen(false);
+  });
 
-      const toggleMenu = () => {
-        setOpen(mobileDrawer.classList.contains('translate-x-full'));
-      };
-
-      menuToggle.addEventListener('click', toggleMenu);
-      drawerOverlay.addEventListener('click', toggleMenu);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !mobileDrawer.classList.contains('translate-x-full')) setOpen(false);
-      });
-
-      navLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-          if (!mobileDrawer.classList.contains('translate-x-full')) setOpen(false);
-        });
-      });
-    }
-  }
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isDrawerOpen()) setDrawerOpen(false);
+  });
 </script>

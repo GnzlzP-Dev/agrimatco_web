@@ -1,10 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
+import netlify from '@astrojs/netlify';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
+const isDevelopmentServer = process.argv.some((argument) => argument === 'dev');
+
 export default defineConfig({
+  output: isDevelopmentServer ? 'server' : 'static',
+  ...(!isDevelopmentServer ? { adapter: netlify() } : {}),
   // Nota: esta opción NO evita el 301 de Netlify. Netlify tiene activados los
   // "Pretty URLs" por defecto, que sirven /about/ y responden 301 a /about, y
   // su documentación aclara que eso no se puede desactivar con una regla de
@@ -22,6 +26,6 @@ export default defineConfig({
     // solicitaba. Cada imagen declara los suyos.
   },
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+  },
 });

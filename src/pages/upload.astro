@@ -46,7 +46,7 @@ const uploaderConfigured = Boolean(cloudName && uploadPreset);
                 id="agrimatco-upload-widget"
                 uploadPreset={uploadPreset}
                 options={{
-                  folder: 'AGRIMATCO',
+                  folder: 'AGRIMATCO/images',
                   resourceType: 'image',
                   multiple: true,
                   maxFiles: 20,
@@ -87,7 +87,14 @@ const uploaderConfigured = Boolean(cloudName && uploadPreset);
             class="mt-5 hidden rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900"
             role="status"
             aria-live="polite"
-          ></div>
+          >
+            <p id="upload-feedback-message"></p>
+            <a
+              id="upload-gallery-link"
+              href="/gallery"
+              class="mt-2 hidden font-semibold underline underline-offset-2"
+            >Ver galería</a>
+          </div>
 
 
         </div>
@@ -104,17 +111,26 @@ const uploaderConfigured = Boolean(cloudName && uploadPreset);
     <script>
       const uploadWidget = document.querySelector('#agrimatco-upload-widget');
       const feedback = document.querySelector('#upload-feedback');
+      const feedbackMessage = document.querySelector('#upload-feedback-message');
+      const galleryLink = document.querySelector('#upload-gallery-link');
       let uploadedCount = 0;
 
-      if (uploadWidget instanceof HTMLElement && feedback instanceof HTMLDivElement) {
+      if (
+        uploadWidget instanceof HTMLElement &&
+        feedback instanceof HTMLDivElement &&
+        feedbackMessage instanceof HTMLParagraphElement &&
+        galleryLink instanceof HTMLAnchorElement
+      ) {
         uploadWidget.addEventListener('clduploadwidget:success', () => {
           uploadedCount += 1;
-          feedback.textContent = `${uploadedCount} imagen${uploadedCount === 1 ? '' : 'es'} cargada${uploadedCount === 1 ? '' : 's'} correctamente. Aparecerá${uploadedCount === 1 ? '' : 'n'} en la galería después de la siguiente publicación del sitio.`;
+          feedbackMessage.textContent = `${uploadedCount} imagen${uploadedCount === 1 ? '' : 'es'} cargada${uploadedCount === 1 ? '' : 's'} correctamente. Ya puedes verla${uploadedCount === 1 ? '' : 's'} en la galería.`;
+          galleryLink.classList.remove('hidden');
           feedback.classList.remove('hidden');
         });
 
         uploadWidget.addEventListener('clduploadwidget:error', () => {
-          feedback.textContent = 'No se pudo completar una carga. Revisa el mensaje del widget e inténtalo de nuevo.';
+          feedbackMessage.textContent = 'No se pudo completar una carga. Revisa el mensaje del widget e inténtalo de nuevo.';
+          galleryLink.classList.add('hidden');
           feedback.classList.remove('hidden', 'border-emerald-200', 'bg-emerald-50', 'text-emerald-900');
           feedback.classList.add('border-red-200', 'bg-red-50', 'text-red-800');
         });

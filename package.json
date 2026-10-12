@@ -8,10 +8,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/netlify": "^6.6.5",
     "@tailwindcss/vite": "^4.3.2",
     "astro": "^5.0.0",
     "astro-cloudinary": "^1.4.0",

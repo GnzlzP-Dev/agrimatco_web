@@ -1,4 +1,5 @@
 ---
+import logo from '../../assets/ui/brand/logo-horizontal-agrimatco.png';
 ---
 <footer id="contacto" class="relative bg-brand-dark text-gray-300 pt-16 pb-8 overflow-hidden border-t-4 border-brand-green scroll-mt-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -6,9 +7,9 @@
       
       <div class="lg:col-span-5 space-y-6">
         <div>
-          <span class="text-white text-2xl font-extrabold tracking-tight block">
-            AGRIMATCO<span class="text-brand-green">.</span>
-          </span>
+          <div class="inline-block rounded-lg bg-white/95 px-3 py-1 shadow-md">
+            <img src={logo.src} alt="Agrimatco" class="block h-auto w-48" width="587" height="189" loading="lazy" />
+          </div>
           <span class="text-xs uppercase tracking-widest text-brand-green font-bold block mt-1">
             Nutrición Vegetal de Alta Eficiencia
           </span>

@@ -84,13 +84,24 @@ node -e "const w=require('wawoff2'),f=require('fs');w.compress(f.readFileSync('p
 
 ## 🖼️ Galería desde Cloudinary
 
-La página `/gallery` obtiene imágenes de la carpeta `AGRIMATCO` de Cloudinary.
+La página `/gallery` obtiene las imágenes de la carpeta `AGRIMATCO/images` de Cloudinary.
 No es necesario copiar imágenes a `src/assets/gallery/` ni declararlas en un archivo.
-Al subir imágenes a esa carpeta, aparecerán en la galería al volver a generar el sitio.
+La galería organiza las fotos por categorías en una lista lateral. Cada grupo tiene su propio
+título, descripción y mosaico de imágenes; al final se puede avanzar al grupo anterior o al
+siguiente. En móvil, la lista se presenta en un menú compacto. Los metadatos se consultan en
+páginas de ocho resultados y se agregan progresivamente con esqueletos de carga, mientras el
+navegador carga las imágenes de forma diferida (`loading="lazy"`). El mosaico tiene cuatro
+columnas en pantallas grandes.
 Para personalizar el texto accesible, añade el contexto `alt` en los metadatos de la imagen;
 el contexto `caption` se usa como título visible y, si falta, se reutiliza el texto alternativo.
 
-El loader necesita estas credenciales en un archivo `.env` en la raíz del proyecto:
+Para agrupar las imágenes, asigna en Cloudinary el tag correspondiente a cada una:
+`cultivo-arandano`, `cultivo-cucurbitaceas`, `cultivo-pasifloras`, `cultivo-pompon`,
+`cultivo-papa`, `cultivo-zanahoria`, `cultivo-tomate`, `plantuladero`, `cultivo-fresas`,
+`cultivo-platano`, `cultivo-uva`, `producto` o `logistica`. Las imágenes sin el tag de su
+grupo no aparecerán en esa sección.
+
+La consulta segura requiere estas variables en un archivo `.env` en la raíz del proyecto:
 
 ```env
 PUBLIC_CLOUDINARY_CLOUD_NAME=tu_cloud_name
@@ -98,8 +109,10 @@ PUBLIC_CLOUDINARY_API_KEY=tu_api_key
 CLOUDINARY_API_SECRET=tu_api_secret
 ```
 
-No compartas ni publiques `CLOUDINARY_API_SECRET`. Configura las mismas variables en el
-entorno de build de Netlify. La galería lista hasta 500 imágenes de esa carpeta.
+No compartas ni publiques `CLOUDINARY_API_SECRET`. Configura estas variables en Netlify para
+que `/api/gallery.json` consulte Cloudinary desde el servidor sin exponer el secreto al
+navegador. Las páginas normales siguen siendo estáticas; solo este endpoint se ejecuta en
+servidor. En desarrollo, el mismo endpoint consulta Cloudinary usando las variables de `.env`.
 
 ## 📤 Portal de carga para el cliente
 
@@ -112,15 +125,16 @@ PUBLIC_CLOUDINARY_UPLOAD_PRESET=nombre_del_preset
 ```
 
 En Cloudinary crea un upload preset **unsigned** dedicado para el cliente y configúralo para
-guardar en `AGRIMATCO`. El widget permite imágenes JPG, PNG, WebP y AVIF, hasta 10 MB cada una
+guardar en `AGRIMATCO/images`. El widget permite imágenes JPG, PNG, WebP y AVIF, hasta 10 MB cada una
 y 20 por selección. Configura también esos límites en el preset; las opciones del widget son
 una ayuda de interfaz, no un control de seguridad. Para asignar un nombre distinto a cada
 imagen, usa el campo **ID público** de **Opciones avanzadas** del widget.
 
 `/upload` no tiene login: `noindex` y no incluir el enlace en el menú no restringen el acceso.
 Cualquier persona que consiga el enlace puede cargar archivos usando el preset público.
-Para proteger el acceso se necesita añadir autenticación. Los archivos aparecen en la galería
-después de una nueva publicación del sitio, porque la galería se genera durante el build.
+Para proteger el acceso se necesita añadir autenticación. Al terminar de cargar, usa el enlace
+**Ver galería**; allí se consultan las imágenes actuales de Cloudinary sin esperar una nueva
+publicación.
 
 ### Deploy por lotes
 
@@ -139,8 +153,10 @@ Los Deploy Previews son ilimitados y gratis: itera en ramas de PR sin costo.
 |---------|--------|
 | `npm run dev` | Start development server |
 | `npm run build` | Build for production |
-| `npm run preview` | Preview production build locally |
 | `npm run astro ...` | Run Astro CLI commands |
+
+El adaptador de Netlify no admite `astro preview`; para validar el endpoint local usa
+`npm run dev` y para revisar el build de producción usa un Deploy Preview de Netlify.
 
 ## 🎨 Styling
 

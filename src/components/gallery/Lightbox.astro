@@ -68,9 +68,6 @@
     const dialog = document.getElementById('gallery-lightbox') as HTMLDialogElement | null;
     if (!dialog) return;
 
-    const items: Item[] = JSON.parse(document.getElementById('gallery-data')?.textContent ?? '[]');
-    if (items.length === 0) return;
-
     // `astro:page-load` también dispara en la carga inicial, así que esta
     // función puede llegar a correr dos veces sobre el mismo DOM. Sin esta
     // guarda el click de una imagen abriría el visor varias veces.
@@ -83,7 +80,12 @@
 
     let current = 0;
 
+    const getItems = (): Item[] =>
+      JSON.parse(document.getElementById('gallery-data')?.textContent ?? '[]');
+
     const render = (index: number) => {
+      const items = getItems();
+      if (items.length === 0) return;
       current = (index + items.length) % items.length;
       const item = items[current];
       img.hidden = false;
@@ -97,6 +99,7 @@
     };
 
     const open = (index: number) => {
+      if (getItems().length === 0) return;
       render(index);
       dialog.showModal();
     };
@@ -106,8 +109,11 @@
       dialog.close();
     };
 
-    document.querySelectorAll('[data-gallery-open]').forEach((trigger) => {
-      trigger.addEventListener('click', () => open(Number(trigger.getAttribute('data-gallery-open'))));
+    document.getElementById('gallery-grid')?.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const trigger = target.closest<HTMLElement>('[data-gallery-open]');
+      if (trigger) open(Number(trigger.getAttribute('data-gallery-open')));
     });
 
     dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
@@ -127,18 +133,20 @@
 
   // Navegación por teclado entre tiles, foco visible.
   const bindTileKeys = () => {
-    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-gallery-open]'));
-    if (triggers.length === 0) return;
-    if (triggers[0].dataset.keysBound === 'true') return;
-    triggers[0].dataset.keysBound = 'true';
+    const grid = document.getElementById('gallery-grid');
+    if (!grid || grid.dataset.keysBound === 'true') return;
+    grid.dataset.keysBound = 'true';
 
-    triggers.forEach((trigger, i) => {
-      trigger.addEventListener('keydown', (event) => {
-        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-        event.preventDefault();
-        const next = (i + (event.key === 'ArrowRight' ? 1 : -1) + triggers.length) % triggers.length;
-        triggers[next].focus();
-      });
+    grid.addEventListener('keydown', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement) || !target.matches('[data-gallery-open]')) return;
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      const triggers = Array.from(grid.querySelectorAll<HTMLElement>('[data-gallery-open]'));
+      const index = triggers.indexOf(target);
+      if (index === -1) return;
+      event.preventDefault();
+      const next = (index + (event.key === 'ArrowRight' ? 1 : -1) + triggers.length) % triggers.length;
+      triggers[next].focus();
     });
   };
 

@@ -1,68 +1,472 @@
 ---
-import { cloudinaryImageUrl, type GalleryEntry } from '../../data/gallery';
-
-interface Props {
-  items: GalleryEntry[];
-}
-
-const { items } = Astro.props;
-
-// Las primeras filas son las visibles al cargar: sin lazy para no penalizar el LCP.
-const PRIORITY_COUNT = 8;
-
-const payload = items.map((item) => ({
-  title: item.title,
-  alt: item.alt,
-  fullSrc: item.fullSrc,
-  fullWidth: item.fullWidth,
-  fullHeight: item.fullHeight,
-}));
-const safePayload = JSON.stringify(payload).replace(/</g, '\\u003c');
+import { GALLERY_CATEGORIES } from '../../data/gallery-categories';
 ---
 
-{
-  items.length === 0 ? (
-    <div class="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-20 text-center">
-      <p class="text-sm leading-relaxed text-gray-500">
-        Todavía no hay contenido en la galería.
-        Sube imágenes a la carpeta <code class="rounded bg-gray-100 px-1.5 py-0.5 text-xs">AGRIMATCO</code>
-        de Cloudinary para que aparezcan aquí.
-      </p>
-    </div>
-  ) : (
-    <>
-      <div class="columns-1 sm:columns-2 lg:columns-3 gap-4">
-        {items.map((item, i) => (
-          <div class="mb-4 break-inside-avoid">
+<div class="grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12">
+  <aside class="lg:sticky lg:top-28 lg:self-start">
+    <details class="group rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:hidden">
+      <summary class="cursor-pointer list-none font-bold text-gray-900">
+        Categorías
+        <span class="float-right text-brand-green transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
+      </summary>
+      <nav class="mt-4" aria-label="Categorías de la galería">
+        <ul class="space-y-1">
+          {GALLERY_CATEGORIES.map((category, index) => (
+            <li>
+              <button
+                type="button"
+                data-gallery-category={category.id}
+                aria-current={index === 0 ? 'true' : undefined}
+                class:list={[
+                  'w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
+                  index === 0
+                    ? 'bg-brand-green/10 font-bold text-brand-green'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-brand-green',
+                ]}
+              >
+                {category.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+
+    <nav class="hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:block" aria-label="Categorías de la galería">
+      <h2 class="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-gray-400">Categorías</h2>
+      <ul class="space-y-1">
+        {GALLERY_CATEGORIES.map((category, index) => (
+          <li>
             <button
               type="button"
-              class="group relative block w-full overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-200/70 transition-shadow duration-300 hover:shadow-xl hover:shadow-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2"
-              data-gallery-open={i}
-              aria-label={`Ampliar ${item.title}`}
+              data-gallery-category={category.id}
+              aria-current={index === 0 ? 'true' : undefined}
+              class:list={[
+                'w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
+                index === 0
+                  ? 'bg-brand-green/10 font-bold text-brand-green'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-brand-green',
+              ]}
             >
-              <img
-                src={cloudinaryImageUrl(item.secureUrl, 960)}
-                srcset={[400, 640, 960, 1280]
-                  .map((width) => `${cloudinaryImageUrl(item.secureUrl, width)} ${width}w`)
-                  .join(', ')}
-                sizes="(min-width:1280px) 300px, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-                width={item.width}
-                height={item.height}
-                loading={i < PRIORITY_COUNT ? 'eager' : 'lazy'}
-                decoding="async"
-                fetchpriority={i < PRIORITY_COUNT ? 'high' : 'auto'}
-                alt={item.alt}
-                class="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.04]"
-              />
-              <span class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/75 to-transparent px-3 pb-3 pt-8 text-left text-sm font-semibold text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                {item.title}
-              </span>
+              {category.label}
             </button>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
+    </nav>
+  </aside>
 
-      <script type="application/json" id="gallery-data" set:html={safePayload} is:inline />
-    </>
-  )
-}
+  <section aria-labelledby="gallery-category-title">
+    <header class="mb-7">
+      <h2 id="gallery-category-title" class="scroll-mt-28 mb-3 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+        {GALLERY_CATEGORIES[0].label}
+      </h2>
+      <p id="gallery-category-description" class="max-w-3xl text-sm leading-relaxed text-gray-600 sm:text-base">
+        {GALLERY_CATEGORIES[0].description}
+      </p>
+    </header>
+
+    <p id="gallery-status" class="sr-only" role="status" aria-live="polite">Cargando imágenes...</p>
+    <p id="gallery-error" class="mb-5 hidden text-sm text-amber-800" role="alert"></p>
+    <button
+      id="gallery-retry"
+      type="button"
+      class="mb-5 hidden rounded-lg bg-brand-green px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#07962f] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-green/25"
+    >
+      Reintentar
+    </button>
+
+    <div id="gallery-grid" class="columns-2 gap-3 opacity-100 transition-opacity duration-300 motion-reduce:transition-none sm:columns-3 sm:gap-4 xl:columns-4" aria-busy="true"></div>
+
+    <nav id="gallery-group-navigation" class="mt-12 hidden flex items-center justify-between gap-4 border-t border-gray-200 pt-6" aria-label="Navegación entre categorías">
+      <button
+        type="button"
+        data-gallery-previous
+        class="group flex flex-col max-w-[48%] items-center gap-3 rounded-xl p-2 text-left transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
+      >
+        <img data-gallery-previous-image alt="" class="h-12 w-12 shrink-0 rounded-full bg-gray-100 object-cover sm:h-16 sm:w-16" loading="lazy" />
+        <span class="min-w-0">
+          <span data-gallery-previous-label class="block truncate text-sm font-bold text-gray-900 group-hover:text-brand-green"></span>
+        </span>
+      </button>
+      <button
+        type="button"
+        data-gallery-next
+        class="group flex flex-col max-w-[48%] items-center gap-3 rounded-xl p-2 text-right transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
+      >
+      <img data-gallery-next-image alt="" class="h-12 w-12 shrink-0 rounded-full bg-gray-100 object-cover sm:h-16 sm:w-16" loading="lazy" />
+        <span class="min-w-0">
+          <span data-gallery-next-label class="block truncate text-sm font-bold text-gray-900 group-hover:text-brand-green"></span>
+        </span>
+      </button>
+    </nav>
+  </section>
+</div>
+
+<script type="application/json" id="gallery-data" is:inline>[]</script>
+
+<script>
+  import { cloudinaryImageUrl } from '../../data/gallery';
+  import {
+    GALLERY_CATEGORIES,
+    getGalleryCategory,
+    isGalleryCategoryId,
+    type GalleryCategoryId,
+  } from '../../data/gallery-categories';
+
+  interface GalleryItem {
+    secureUrl: string;
+    alt: string;
+    title: string;
+    width: number;
+    height: number;
+    fullSrc: string;
+    fullWidth: number;
+    fullHeight: number;
+  }
+
+  interface GalleryPage {
+    items: GalleryItem[];
+    nextCursor: string | null;
+  }
+
+  const isGalleryItem = (value: unknown): value is GalleryItem =>
+    typeof value === 'object' &&
+    value !== null &&
+    'secureUrl' in value &&
+    typeof value.secureUrl === 'string' &&
+    'alt' in value &&
+    typeof value.alt === 'string' &&
+    'title' in value &&
+    typeof value.title === 'string' &&
+    'width' in value &&
+    typeof value.width === 'number' &&
+    'height' in value &&
+    typeof value.height === 'number' &&
+    'fullSrc' in value &&
+    typeof value.fullSrc === 'string' &&
+    'fullWidth' in value &&
+    typeof value.fullWidth === 'number' &&
+    'fullHeight' in value &&
+    typeof value.fullHeight === 'number';
+
+  const isGalleryPage = (value: unknown): value is GalleryPage =>
+    typeof value === 'object' &&
+    value !== null &&
+    'items' in value &&
+    Array.isArray(value.items) &&
+    value.items.every(isGalleryItem) &&
+    'nextCursor' in value &&
+    (typeof value.nextCursor === 'string' || value.nextCursor === null);
+
+  const makeSkeletons = () => {
+    const fragment = document.createDocumentFragment();
+    for (let index = 0; index < 8; index += 1) {
+      const skeleton = document.createElement('div');
+      skeleton.className = 'mb-3 break-inside-avoid sm:mb-4';
+      skeleton.setAttribute('aria-hidden', 'true');
+
+      const block = document.createElement('div');
+      block.className = `animate-pulse rounded-xl bg-gray-200 ${
+        index % 3 === 0 ? 'h-44' : index % 3 === 1 ? 'h-60' : 'h-52'
+      }`;
+      skeleton.append(block);
+      fragment.append(skeleton);
+    }
+    return fragment;
+  };
+
+  const makeTile = (item: GalleryItem, index: number) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mb-3 break-inside-avoid sm:mb-4';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className =
+      'group relative block w-full overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-200/70 transition-shadow duration-300 hover:shadow-xl hover:shadow-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2';
+    button.dataset.galleryOpen = String(index);
+    button.setAttribute('aria-label', `Ampliar ${item.title}`);
+
+    const image = document.createElement('img');
+    image.src = cloudinaryImageUrl(item.secureUrl, 720);
+    image.srcset = [320, 480, 720, 960]
+      .map((width) => `${cloudinaryImageUrl(item.secureUrl, width)} ${width}w`)
+      .join(', ');
+    image.sizes = '(min-width:1280px) 220px, (min-width:640px) 30vw, 45vw';
+    image.width = item.width;
+    image.height = item.height;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.alt = item.alt;
+    image.className = 'block h-auto w-full transition-transform duration-500 group-hover:scale-[1.04]';
+
+    const title = document.createElement('span');
+    title.className =
+      'pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/75 to-transparent px-3 pb-3 pt-8 text-left text-sm font-semibold text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100';
+    title.textContent = item.title;
+
+    button.append(image, title);
+    wrapper.append(button);
+    return wrapper;
+  };
+
+  const initGallery = () => {
+    const grid = document.getElementById('gallery-grid');
+    const data = document.getElementById('gallery-data');
+    const status = document.getElementById('gallery-status');
+    const errorMessage = document.getElementById('gallery-error');
+    const retryButton = document.getElementById('gallery-retry');
+    const title = document.getElementById('gallery-category-title');
+    const description = document.getElementById('gallery-category-description');
+    const groupNavigation = document.getElementById('gallery-group-navigation');
+    const sidebar = document.querySelector('aside');
+    if (
+      !grid ||
+      !data ||
+      !status ||
+      !errorMessage ||
+      !(retryButton instanceof HTMLButtonElement) ||
+      !title ||
+      !description ||
+      !groupNavigation ||
+      !sidebar ||
+      grid.dataset.galleryInitialized === 'true'
+    ) {
+      return;
+    }
+    grid.dataset.galleryInitialized = 'true';
+
+    let items: GalleryItem[] = [];
+    let nextCursor: string | null = null;
+    let activeCategory: GalleryCategoryId = GALLERY_CATEGORIES[0].id;
+    let requestId = 0;
+    let requestController: AbortController | null = null;
+    const categoryCovers = new Map<GalleryCategoryId, string>();
+
+    const updateLightboxData = () => {
+      data.textContent = JSON.stringify(
+        items.map(({ title: caption, alt, fullSrc, fullWidth, fullHeight }) => ({
+          title: caption,
+          alt,
+          fullSrc,
+          fullWidth,
+          fullHeight,
+        })),
+      );
+    };
+
+    const updateActiveCategory = () => {
+      const category = getGalleryCategory(activeCategory);
+      title.textContent = category.label;
+      description.textContent = category.description;
+      sidebar.querySelectorAll<HTMLButtonElement>('[data-gallery-category]').forEach((button) => {
+        const selected = button.dataset.galleryCategory === activeCategory;
+        if (selected) button.setAttribute('aria-current', 'true');
+        else button.removeAttribute('aria-current');
+        button.classList.toggle('bg-brand-green/10', selected);
+        button.classList.toggle('font-bold', selected);
+        button.classList.toggle('text-brand-green', selected);
+        button.classList.toggle('text-gray-600', !selected);
+      });
+      const mobileSummary = sidebar.querySelector('summary');
+      if (mobileSummary?.firstChild) {
+        mobileSummary.firstChild.textContent = `Categorías · ${category.label} `;
+      }
+      renderGroupNavigation();
+    };
+
+    const renderGroupNavigation = () => {
+      const currentIndex = GALLERY_CATEGORIES.findIndex(({ id }) => id === activeCategory);
+      const previous = groupNavigation.querySelector<HTMLButtonElement>('[data-gallery-previous]');
+      const next = groupNavigation.querySelector<HTMLButtonElement>('[data-gallery-next]');
+      if (!previous || !next) return;
+
+      const setTarget = (
+        button: HTMLButtonElement,
+        direction: -1 | 1,
+        imageSelector: string,
+        labelSelector: string,
+      ) => {
+        const category = GALLERY_CATEGORIES[currentIndex + direction];
+        button.hidden = !category;
+        if (!category) return;
+        button.dataset.galleryTarget = category.id;
+        const label = button.querySelector<HTMLElement>(labelSelector);
+        const image = button.querySelector<HTMLImageElement>(imageSelector);
+        if (label) label.textContent = category.label;
+        if (image) {
+          const cover = categoryCovers.get(category.id);
+          if (cover) image.src = cloudinaryImageUrl(cover, 128);
+          else image.removeAttribute('src');
+        }
+      };
+
+      setTarget(previous, -1, '[data-gallery-previous-image]', '[data-gallery-previous-label]');
+      setTarget(next, 1, '[data-gallery-next-image]', '[data-gallery-next-label]');
+    };
+
+    const fetchPage = async (
+      category: GalleryCategoryId,
+      cursor: string | null,
+      signal: AbortSignal,
+    ): Promise<GalleryPage> => {
+      const url = new URL('/api/gallery.json', window.location.origin);
+      url.searchParams.set('category', category);
+      if (cursor) url.searchParams.set('cursor', cursor);
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal,
+      });
+      const result: unknown = await response.json();
+      if (!response.ok) {
+        const message =
+          typeof result === 'object' && result !== null && 'error' in result
+            ? String(result.error)
+            : `La galería respondió con HTTP ${response.status}.`;
+        throw new Error(message);
+      }
+      if (!isGalleryPage(result)) throw new Error('La respuesta de imágenes de Cloudinary no es válida.');
+      return result;
+    };
+
+    const preloadNavigationCovers = async (signal: AbortSignal) => {
+      const currentIndex = GALLERY_CATEGORIES.findIndex(({ id }) => id === activeCategory);
+      const adjacent = [GALLERY_CATEGORIES[currentIndex - 1], GALLERY_CATEGORIES[currentIndex + 1]]
+        .filter((category) => category && !categoryCovers.has(category.id));
+      await Promise.all(
+        adjacent.map(async (category) => {
+          try {
+            const page = await fetchPage(category.id, null, signal);
+            if (page.items[0] && !signal.aborted) {
+              categoryCovers.set(category.id, page.items[0].secureUrl);
+              renderGroupNavigation();
+            }
+          } catch (error) {
+            if (!signal.aborted) {
+              console.warn(`[gallery] No se pudo cargar la imagen de vista previa para ${category.label}.`, error);
+            }
+          }
+        }),
+      );
+    };
+
+    const scrollToCategory = () => {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      title.scrollIntoView({ behavior, block: 'start' });
+    };
+
+    const loadAllPages = async (currentRequestId: number, controller: AbortController) => {
+      const seenCursors = new Set<string>();
+      errorMessage.classList.add('hidden');
+      retryButton.classList.add('hidden');
+      if (items.length === 0) {
+        grid.replaceChildren(makeSkeletons());
+        grid.setAttribute('aria-busy', 'true');
+      } else {
+        grid.append(makeSkeletons());
+      }
+
+      try {
+        do {
+          const result = await fetchPage(activeCategory, nextCursor, controller.signal);
+          if (currentRequestId !== requestId) return;
+
+          const skeletons = Array.from(grid.children).filter((element) =>
+            element.getAttribute('aria-hidden') === 'true',
+          );
+          const fragment = document.createDocumentFragment();
+          result.items.forEach((item) => {
+            fragment.append(makeTile(item, items.length));
+            items.push(item);
+          });
+          skeletons.forEach((skeleton) => skeleton.remove());
+          grid.append(fragment);
+          grid.classList.remove('opacity-0');
+          if (items.length > 0 && !categoryCovers.has(activeCategory)) {
+            categoryCovers.set(activeCategory, items[0].secureUrl);
+            renderGroupNavigation();
+          }
+
+          nextCursor = result.nextCursor;
+          if (nextCursor) {
+            if (seenCursors.has(nextCursor)) throw new Error('Cloudinary repitió el cursor de paginación.');
+            seenCursors.add(nextCursor);
+            grid.append(makeSkeletons());
+          }
+          updateLightboxData();
+          status.textContent = nextCursor
+            ? `Cargando imágenes de ${getGalleryCategory(activeCategory).label}. ${items.length} cargadas hasta ahora.`
+            : `${items.length} imágenes cargadas de ${getGalleryCategory(activeCategory).label}.`;
+        } while (nextCursor);
+
+        grid.setAttribute('aria-busy', 'false');
+        grid.classList.remove('opacity-0');
+        if (items.length === 0) {
+          status.textContent = `Todavía no hay imágenes etiquetadas como “${getGalleryCategory(activeCategory).tag}”.`;
+        }
+        groupNavigation.classList.remove('hidden');
+        await preloadNavigationCovers(controller.signal);
+        if (currentRequestId === requestId) scrollToCategory();
+      } catch (error) {
+        if (controller.signal.aborted || currentRequestId !== requestId) return;
+        console.error('[gallery] No se pudieron cargar las imágenes de la categoría.', error);
+        Array.from(grid.children)
+          .filter((element) => element.getAttribute('aria-hidden') === 'true')
+          .forEach((skeleton) => skeleton.remove());
+        grid.setAttribute('aria-busy', 'false');
+        grid.classList.remove('opacity-0');
+        errorMessage.textContent =
+          error instanceof Error ? error.message : 'No fue posible cargar imágenes de Cloudinary.';
+        errorMessage.classList.remove('hidden');
+        retryButton.classList.remove('hidden');
+        scrollToCategory();
+      } finally {
+        if (currentRequestId === requestId) requestController = null;
+      }
+    };
+
+    const selectCategory = (category: GalleryCategoryId) => {
+      if (category === activeCategory) return;
+      requestController?.abort();
+      activeCategory = category;
+      requestId += 1;
+      requestController = new AbortController();
+      items = [];
+      nextCursor = null;
+      grid.classList.add('opacity-0');
+      groupNavigation.classList.add('hidden');
+      updateActiveCategory();
+      updateLightboxData();
+      void loadAllPages(requestId, requestController);
+      sidebar.querySelector('details')?.removeAttribute('open');
+    };
+
+    sidebar.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>('[data-gallery-category]');
+      const category = button?.dataset.galleryCategory;
+      if (category && isGalleryCategoryId(category)) selectCategory(category);
+    });
+
+    groupNavigation.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>('[data-gallery-target]');
+      const category = button?.dataset.galleryTarget;
+      if (category && isGalleryCategoryId(category)) selectCategory(category);
+    });
+
+    retryButton.addEventListener('click', () => {
+      requestController = new AbortController();
+      void loadAllPages(requestId, requestController);
+    });
+
+    updateActiveCategory();
+    requestController = new AbortController();
+    void loadAllPages(requestId, requestController);
+  };
+
+  document.addEventListener('astro:page-load', initGallery);
+  initGallery();
+</script>

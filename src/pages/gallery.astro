@@ -1,39 +1,7 @@
 ---
-import { getCollection } from 'astro:content';
-
 import Layout from '../layouts/Layout.astro';
 import Gallery from '../components/gallery/Gallery.astro';
 import Lightbox from '../components/gallery/Lightbox.astro';
-import { cloudinaryImageUrl, type GalleryEntry } from '../data/gallery';
-
-const assets = await getCollection('agrimatco');
-
-const humanize = (value: string) =>
-  value
-    .split('/')
-    .pop()
-    ?.replace(/\.[^.]+$/, '')
-    .replace(/[-_]+/g, ' ')
-    .trim() || value;
-
-const items: GalleryEntry[] = assets.map(({ data }) => {
-  const fallback = humanize(data.display_name ?? data.public_id);
-  const alt = data.context?.custom?.alt?.trim() || fallback;
-  const title = data.context?.custom?.caption?.trim() || alt;
-  const fullWidth = Math.min(1600, data.width);
-  const fullHeight = Math.round((fullWidth * data.height) / data.width);
-
-  return {
-    secureUrl: data.secure_url,
-    alt,
-    title,
-    width: data.width,
-    height: data.height,
-    fullSrc: cloudinaryImageUrl(data.secure_url, fullWidth),
-    fullWidth,
-    fullHeight,
-  };
-});
 ---
 
 <Layout
@@ -42,10 +10,7 @@ const items: GalleryEntry[] = assets.map(({ data }) => {
 >
   <main class="pt-28 pb-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <header class="mb-10 md:mb-14">
-        <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
-          AGRIMATCO
-        </span>
+      <header class="my-10 md:mb-14">
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111827] tracking-tight mb-4">
           Galería
         </h1>
@@ -55,7 +20,7 @@ const items: GalleryEntry[] = assets.map(({ data }) => {
         </p>
       </header>
 
-      <Gallery items={items} />
+      <Gallery />
     </div>
   </main>
 

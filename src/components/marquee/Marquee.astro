@@ -44,14 +44,14 @@ const { items = defaultLogos, speed = '80s' } = Astro.props;
 ---
 <div class="bg-white relative overflow-hidden w-full py-4 marquee-container">
   <div class="flex animate-marquee whitespace-nowrap items-center w-max">
-    <!-- Primer grupo de logos -->
+<!-- Primer grupo de logos -->
     <div class="flex items-center shrink-0">
       {items.map((item) => (
         <Image 
           src={item} 
           alt="Logo" 
           inferSize={true} 
-          class="mx-12 h-10 w-auto object-contain" 
+          class="mx-6 h-7 md:mx-10 md:h-9 lg:mx-12 lg:h-11 w-auto object-contain" 
         />
       ))}
     </div>
@@ -62,7 +62,7 @@ const { items = defaultLogos, speed = '80s' } = Astro.props;
           src={item} 
           alt="Logo" 
           inferSize={true} 
-          class="mx-12 h-10 w-auto object-contain" 
+          class="mx-6 h-7 md:mx-10 md:h-9 lg:mx-12 lg:h-11 w-auto object-contain" 
         />
       ))}
     </div>

@@ -85,8 +85,8 @@ const config = {
             before:opacity-70 py-16 md:py-24 overflow-hidden scroll-mt-10"
   style={`--coverage-bg: url(${mapaBg.src})`}
 >
-  <div class="absolute bottom-0 left-0 w-full h-60 bg-gradient-to-t from-[#F9FAFB] to-transparent pointer-events-none z-0"></div>
-  <div class="absolute top-0 left-0 w-full h-60 bg-gradient-to-b from-[#F9FAFB] to-transparent pointer-events-none z-0"></div>
+  <div class="absolute bottom-0 left-0 w-full h-60 bg-gradient-to-t from-surface to-transparent pointer-events-none z-0"></div>
+  <div class="absolute top-0 left-0 w-full h-60 bg-gradient-to-b from-surface to-transparent pointer-events-none z-0"></div>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -94,7 +94,7 @@ const config = {
       <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
         Expansión Estratégica
       </span>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-ink tracking-tight">
         Cobertura y Presencia Agrimatco: <span class="text-white bg-brand-green px-5">Siempre cerca de tu región</span>
       </h2>
     </div>
@@ -109,7 +109,7 @@ const config = {
           <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-5">
             <div class="flex items-center gap-2.5">
               <div class="w-3 h-3 rounded-full bg-brand-green"></div>
-              <h3 class="text-lg font-bold text-[#111827]">{dep.department}</h3>
+              <h3 class="text-lg font-bold text-ink">{dep.department}</h3>
             </div>
             <span class="px-2.5 py-1 rounded bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-wide uppercase whitespace-nowrap">
               {dep.badge}
@@ -119,10 +119,10 @@ const config = {
           <div class="space-y-4">
             {dep.subregions.map((sub) => (
               <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                <h4 class="text-xs font-bold text-[#111827] uppercase tracking-wide mb-2">{sub.name}</h4>
+                <h4 class="text-xs font-bold text-ink uppercase tracking-wide mb-2">{sub.name}</h4>
                 <div class="flex flex-wrap gap-1.5">
                   {sub.towns.map((town) => (
-                    <span class="text-[11px] font-medium text-[#4B5563] bg-white border border-gray-200 rounded-full px-2.5 py-1">
+                    <span class="text-[11px] font-medium text-body bg-white border border-gray-200 rounded-full px-2.5 py-1">
                       {town}
                     </span>
                   ))}
@@ -211,7 +211,7 @@ const config = {
     width: 14px;
     height: 14px;
     border-radius: 9999px;
-    background: #00bb33;
+    background: var(--color-brand-green);
     border: 2px solid #ffffff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     transform-origin: 50% 50%;

@@ -23,14 +23,14 @@ const steps = [
 ];
 ---
 
-<section id="como-funciona" class="relative bg-[#F9FAFB] py-16 md:py-24 overflow-hidden scroll-mt-10">
+<section id="como-funciona" class="relative bg-surface py-16 md:py-24 overflow-hidden scroll-mt-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="text-center max-w-2xl mx-auto mb-14">
       <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
         Así Trabajamos
       </span>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111827] tracking-tight">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-ink tracking-tight">
         De tu Mensaje a tu Cultivo Fertilizado
       </h2>
     </div>
@@ -39,15 +39,15 @@ const steps = [
 
       <div class="hidden md:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-brand-green/20"></div>
 
-      {steps.map((step, i) => (
+      {steps.map((step) => (
         <div class="relative flex flex-col items-center text-center">
           <div class="w-20 h-20 rounded-full bg-white border-2 border-brand-green flex items-center justify-center text-2xl font-extrabold text-brand-green shadow-sm z-10 mb-5">
             {step.number}
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-[#111827] mb-2">
+          <h3 class="text-base sm:text-lg font-bold text-ink mb-2">
             {step.title}
           </h3>
-          <p class="text-xs sm:text-sm text-[#4B5563] leading-relaxed px-2">
+          <p class="text-xs sm:text-sm text-body leading-relaxed px-2">
             {step.desc}
           </p>
         </div>
@@ -59,7 +59,7 @@ const steps = [
         href="https://wa.me/573122278303?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20productos%20Cultivar%20paste"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-brand-green hover:bg-[#00633a] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-xl shadow-emerald-950/20 hover:-translate-y-0.5 group"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-brand-green hover:bg-brand-green-dark text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-xl shadow-emerald-950/20 hover:-translate-y-0.5 group"
       >
         Empezar por WhatsApp
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

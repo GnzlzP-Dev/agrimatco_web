@@ -29,8 +29,15 @@
   --font-heading: 'Unbounded', system-ui, sans-serif;
 
   --color-brand-green: #00bb33;
+  --color-brand-green-dark: #00633a; /* hover de botones verdes */
   --color-brand-dark: #3c3c3c;
   --color-brand-gold: #c39768;
+
+  /* Neutros del sitio (antes repetidos a mano como [#hex]) */
+  --color-ink: #111827;     /* títulos y texto principal */
+  --color-body: #4b5563;    /* texto de apoyo */
+  --color-muted: #6b7280;   /* texto secundario */
+  --color-surface: #f9fafb; /* fondo de secciones */
 }
 
 /* 4. Forzar fuentes por defecto en elementos base */

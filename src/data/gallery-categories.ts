@@ -1,4 +1,10 @@
 export const GALLERY_CATEGORIES = [
+  {
+    id: 'grandes-extensiones',
+    label: 'Grandes extensiones',
+    tag: 'extensiones',
+    description: 'Imágenes de grandes extensiones de cultivos y parcelas.',
+  },
   /*{
     id: 'cultivo-arandano',
     label: 'Cultivo arándano',

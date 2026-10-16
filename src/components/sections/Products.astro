@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import enraizamiento from "../../assets/products/12-31-6-2.jpeg";
 import floracion from "../../assets/products/0-28-17-5.jpeg";
 import balanceado from "../../assets/products/12-12-12-6.jpeg";
-import llenado from "../../assets/products/8-11-27-5.jpeg";
+import produccion from "../../assets/products/8-11-27-5.jpeg";
 
 const R2_URL = import.meta.env.PUBLIC_R2_URL;
 
@@ -45,8 +45,8 @@ const products = [
   },
   {
     npk: "15-20-50 + TE",
-    name: "Llenado",
-    image: llenado,
+    name: "Producción",
+    image: produccion,
     description:
       "Fertilizante en pasta con una concentración extrema de potasio soluble.",
     application: "Fases de fructificación, engorde y maduración final.",
@@ -105,14 +105,7 @@ const products = [
                   class="relative scale-110 z-10 h-full w-auto max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-200"
                 />
               </div>
-              <div
-                class:list={[
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-xs font-bold uppercase tracking-wider mb-3",
-                  product.badge,
-                ]}>
-                <span class:list={["w-1.5 h-1.5 rounded-full", product.dot]} />
-                {product.npk}
-              </div>
+             
               <h3 class="text-lg font-bold text-ink group-hover:text-brand-green transition-colors duration-200 mb-2">
                 Cultivar paste {product.name}
               </h3>

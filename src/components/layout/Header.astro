@@ -1,38 +1,58 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../../assets/ui/brand/logo-horizontal-agrimatco.png';
-import FacebookLogo from '../../assets/ui/socials/Logo_Facebook.svg';
-import InstagramLogo from '../../assets/ui/socials/Logo_Instagram.svg';
-import WhatsappLogo from '../../assets/ui/socials/Logo_WhatsappIcon.svg';
-import { sectionHref } from '../../utils/section-href';
+import { Image } from "astro:assets";
+import logo from "../../assets/ui/brand/logo-horizontal-agrimatco.png";
+import FacebookLogo from "../../assets/ui/socials/Logo_Facebook.svg";
+import InstagramLogo from "../../assets/ui/socials/Logo_Instagram.svg";
+import WhatsappLogo from "../../assets/ui/socials/Logo_WhatsappIcon.svg";
+import { sectionHref } from "../../utils/section-href";
 
-const isHome = Astro.url.pathname === '/';
+const isHome = Astro.url.pathname === "/";
 const section = (anchor: string) => sectionHref(Astro.url.pathname, anchor);
 
 const navLinks = [
-  { label: 'Servicios', href: section('#servicios') },
-  { label: 'Cobertura', href: section('#cobertura') },
-  { label: 'Productos', href: section('#productos') },
-  { label: 'FAQ', href: section('#faq') },
-  { label: 'Galería', href: '/gallery' },
+  { label: "Servicios", href: section("#servicios") },
+  { label: "Cobertura", href: section("#cobertura") },
+  { label: "Productos", href: section("#productos") },
+  { label: "FAQ", href: section("#faq") },
+  { label: "Galería", href: "/gallery" },
 ];
 
-const solidClasses = 'bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green';
-const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4';
+const R2_URL = import.meta.env.PUBLIC_R2_URL;
+
+const brochureLinks = [
+  {
+    label: "Brochure General - Front",
+    href: `${R2_URL}/${encodeURIComponent("MCFP General brochure (Front) triptico.pdf")}`,
+  },
+  {
+    label: "Brochure General - Back",
+    href: `${R2_URL}/${encodeURIComponent("MCFP General brochure (Back) triptico.pdf")}`,
+  },
+];
+
+const solidClasses =
+  "bg-brand-dark backdrop-blur-md py-3 shadow-lg border-b-2 border-brand-green";
+const overlayClasses =
+  "bg-gradient-to-b from-brand-dark/60 to-transparent py-4";
 ---
 
 <header
   id="main-header"
-  data-overlay={isHome ? 'true' : 'false'}
+  data-overlay={isHome ? "true" : "false"}
   data-overlay-classes={overlayClasses}
   data-solid-classes={solidClasses}
   class:list={[
-    'fixed top-0 left-0 w-full z-50 transition-all duration-200',
+    "fixed top-0 left-0 w-full z-50 transition-all duration-200",
     isHome ? overlayClasses : solidClasses,
   ]}
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.02]">
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between"
+  >
+    <a
+      href="/"
+      class="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.02]"
+    >
       <Image
         src={logo}
         alt="Agrimatco"
@@ -44,9 +64,57 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
       />
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-white">
-      {navLinks.map((link) => <a href={link.href} class="hover:text-brand-green transition-colors">{link.label}</a>)}
-      <a href={section('#contact-form')} class="bg-brand-green hover:bg-brand-green-dark text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20">Contacto</a>
+    <nav
+      class="hidden md:flex items-center gap-8 text-sm font-semibold text-white"
+    >
+      {
+        navLinks.map((link) => (
+          <a href={link.href} class="hover:text-brand-green transition-colors">
+            {link.label}
+          </a>
+        ))
+      }
+      <details class="relative group">
+        <summary
+          class="flex cursor-pointer list-none items-center gap-2 hover:text-brand-green transition-colors [&::-webkit-details-marker]:hidden"
+        >
+          Folletos
+          <svg
+            aria-hidden="true"
+            class="h-4 w-4 transition-transform group-open:rotate-180"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 9-7 7-7-7"></path>
+          </svg>
+        </summary>
+        <div
+          class="absolute right-0 top-full mt-3 min-w-56 rounded-lg bg-white py-2 text-brand-dark shadow-xl ring-1 ring-black/10"
+        >
+          {
+            brochureLinks.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block px-4 py-2.5 transition-colors hover:bg-gray-100 hover:text-brand-green"
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+      <a
+        href={section("#contact-form")}
+        class="bg-brand-green hover:bg-brand-green-dark text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-emerald-900/20"
+        >Contacto</a
+      >
     </nav>
 
     <button
@@ -57,11 +125,33 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
       aria-expanded="false"
       aria-controls="mobile-drawer"
     >
-      <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      <svg
+        id="hamburger-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7 transition-transform duration-300"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
-      <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      <svg
+        id="close-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7 hidden transition-transform duration-300"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
   </div>
@@ -70,12 +160,61 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 <!-- Menú lateral para dispositivos móviles -->
 <div
   id="mobile-drawer"
-  class="fixed inset-y-0 right-0 w-[280px] sm:w-[320px] bg-[#f3f3f3] backdrop-blur-md z-40 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between pt-45 pb-8 px-6 border-l border-white/10"
+  class="fixed inset-y-0 right-0 w-[280px] sm:w-[320px] bg-[#f3f3f3] backdrop-blur-md z-40 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between pt-45 pb-8 px-6 border-l border-white/10 overflow-y-auto"
   aria-hidden="true"
 >
-  <nav class="flex flex-col gap-6 text-base font-medium text-brand-dark mobile-nav-links">
-    {navLinks.map((link) => <a href={link.href} class="text-brand-green border-b border-white/5 pb-2 transition-colors">{link.label}</a>)}
-    <a href={section('#contact-form')} class="bg-brand-green text-white px-5 py-3 rounded-lg text-center font-bold transition-all mt-4">Contacto</a>
+  <nav
+    class="flex flex-col gap-6 text-base font-medium text-brand-dark mobile-nav-links"
+  >
+    {
+      navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="text-brand-green border-b border-white/5 pb-2 transition-colors"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+    <details class="group border-b border-white/5 pb-2">
+      <summary
+        class="flex cursor-pointer list-none items-center justify-between text-brand-green [&::-webkit-details-marker]:hidden"
+      >
+        Folletos
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4 transition-transform group-open:rotate-180"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 9-7 7-7-7"></path>
+        </svg>
+      </summary>
+      <div class="mt-3 flex flex-col space-y-3 pl-4">
+        {
+          brochureLinks.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-brand-green hover:text-brand-green-dark transition-colors"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </details>
+    <a
+      href={section("#contact-form")}
+      class="bg-brand-green text-white px-5 py-3 rounded-lg text-center font-bold transition-all mt-4"
+      >Contacto</a
+    >
   </nav>
 
   <div class="text-xs text-brand-green text-center">
@@ -84,15 +223,36 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
 </div>
 
 <!-- Overlay para el menú móvil -->
-<div id="drawer-overlay" class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+<div
+  id="drawer-overlay"
+  class="fixed inset-0 bg-black/40 z-30 hidden opacity-0 transition-opacity duration-300 md:hidden"
+>
+</div>
 
 <!-- Redes sociales flotantes -->
-<div transition:persist="social-float" class="fixed right-2 top-1/2 -translate-y-1/2 md:flex flex-col gap-4 z-50 p-3 rounded-lg">
-  <div class="bg-gray-300/10 backdrop-blur-sm p-1.5 rounded-lg flex flex-col gap-3 border border-white/10 shadow-lg shadow-emerald-950/20">
-    <a href="https://www.facebook.com/agrimatco" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-brand-green transition-colors" aria-label="Facebook de Agrimatco">
+<div
+  transition:persist="social-float"
+  class="fixed right-2 top-1/2 -translate-y-1/2 md:flex flex-col gap-4 z-50 p-3 rounded-lg"
+>
+  <div
+    class="bg-gray-300/10 backdrop-blur-sm p-1.5 rounded-lg flex flex-col gap-3 border border-white/10 shadow-lg shadow-emerald-950/20"
+  >
+    <a
+      href="https://www.facebook.com/agrimatco"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-gray-300 hover:text-brand-green transition-colors"
+      aria-label="Facebook de Agrimatco"
+    >
       <img src={FacebookLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
     </a>
-    <a href="https://www.instagram.com/agrimatco.colombia" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-brand-green transition-colors" aria-label="Instagram de Agrimatco">
+    <a
+      href="https://www.instagram.com/agrimatco.colombia"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-gray-300 hover:text-brand-green transition-colors"
+      aria-label="Instagram de Agrimatco"
+    >
       <img src={InstagramLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
     </a>
   </div>
@@ -108,7 +268,9 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
   aria-label="Contactar por WhatsApp"
 >
   <img src={WhatsappLogo.src} alt="" class="w-6 h-6 sm:w-7 sm:h-7" />
-  <span class="absolute right-16 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none border border-gray-800">
+  <span
+    class="absolute right-16 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none border border-gray-800"
+  >
     ¿Necesitas asesoría?
   </span>
 </a>
@@ -121,42 +283,55 @@ const overlayClasses = 'bg-gradient-to-b from-brand-dark/60 to-transparent py-4'
   // cada página), así que no hace falta recalcularlo en el navegador.
 
   const syncHeader = () => {
-    const header = document.getElementById('main-header');
+    const header = document.getElementById("main-header");
     // Fuera de la home el header es siempre sólido (el fondo es claro).
-    if (!header || header.dataset.overlay !== 'true') return;
+    if (!header || header.dataset.overlay !== "true") return;
 
     const scrolled = window.scrollY > 350;
-    const overlay = (header.dataset.overlayClasses ?? '').split(' ');
-    const solid = (header.dataset.solidClasses ?? '').split(' ');
+    const overlay = (header.dataset.overlayClasses ?? "").split(" ");
+    const solid = (header.dataset.solidClasses ?? "").split(" ");
     overlay.forEach((name) => header.classList.toggle(name, !scrolled));
     solid.forEach((name) => header.classList.toggle(name, scrolled));
   };
 
   const isDrawerOpen = () =>
-    document.getElementById('menu-toggle')?.getAttribute('aria-expanded') === 'true';
+    document.getElementById("menu-toggle")?.getAttribute("aria-expanded") ===
+    "true";
 
   const setDrawerOpen = (open: boolean) => {
-    document.getElementById('mobile-drawer')?.classList.toggle('translate-x-full', !open);
-    document.getElementById('mobile-drawer')?.setAttribute('aria-hidden', String(!open));
-    document.getElementById('menu-toggle')?.setAttribute('aria-expanded', String(open));
-    document.getElementById('drawer-overlay')?.classList.toggle('hidden', !open);
-    document.getElementById('drawer-overlay')?.classList.toggle('opacity-0', !open);
-    document.getElementById('hamburger-icon')?.classList.toggle('hidden', open);
-    document.getElementById('close-icon')?.classList.toggle('hidden', !open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    document
+      .getElementById("mobile-drawer")
+      ?.classList.toggle("translate-x-full", !open);
+    document
+      .getElementById("mobile-drawer")
+      ?.setAttribute("aria-hidden", String(!open));
+    document
+      .getElementById("menu-toggle")
+      ?.setAttribute("aria-expanded", String(open));
+    document
+      .getElementById("drawer-overlay")
+      ?.classList.toggle("hidden", !open);
+    document
+      .getElementById("drawer-overlay")
+      ?.classList.toggle("opacity-0", !open);
+    document.getElementById("hamburger-icon")?.classList.toggle("hidden", open);
+    document.getElementById("close-icon")?.classList.toggle("hidden", !open);
+    document.body.style.overflow = open ? "hidden" : "";
   };
 
-  window.addEventListener('scroll', syncHeader, { passive: true });
-  document.addEventListener('astro:page-load', syncHeader);
+  window.addEventListener("scroll", syncHeader, { passive: true });
+  document.addEventListener("astro:page-load", syncHeader);
   syncHeader();
 
-  document.addEventListener('click', (event) => {
+  document.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
-    if (event.target.closest('#menu-toggle, #drawer-overlay')) setDrawerOpen(!isDrawerOpen());
-    else if (isDrawerOpen() && event.target.closest('.mobile-nav-links a')) setDrawerOpen(false);
+    if (event.target.closest("#menu-toggle, #drawer-overlay"))
+      setDrawerOpen(!isDrawerOpen());
+    else if (isDrawerOpen() && event.target.closest(".mobile-nav-links a"))
+      setDrawerOpen(false);
   });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && isDrawerOpen()) setDrawerOpen(false);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isDrawerOpen()) setDrawerOpen(false);
   });
 </script>

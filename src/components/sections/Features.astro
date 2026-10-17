@@ -1,77 +1,160 @@
 ---
+import { Image } from "astro:assets";
+import lineaCultivar from "../../assets/products/linea-productos.jpeg"
+const cultivosProbados = [
+  "Tomate",
+  "Pepino",
+  "Pimentón",
+  "Flores",
+  "Fresa",
+  "Arándanos",
+  "Hortalizas",
+  "Zanahoria",
+  "Papa",
+  "Aguacate",
+  "Pastos",
+  "Gulupa",
+  "Granadilla",
+  "Plátano",
+  "Cacao",
+  "Café",
+  "Maíz",
+];
 ---
-<section id="servicios" class="relative bg-surface py-14 md:py-24 overflow-hidden scroll-mt-10">
-  
+
+<section
+  id="servicios"
+  class="relative bg-surface py-14 md:py-24 overflow-hidden scroll-mt-10"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
     <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-      <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2">
+      <span
+        class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-2"
+      >
         Respaldo Directo al Productor
       </span>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-dark tracking-tight mb-4">
+      <h2
+        class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-dark tracking-tight mb-4"
+      >
         ¿Por qué elegir las Soluciones Agrícolas de Agrimatco?
       </h2>
       <p class="text-sm sm:text-base text-muted leading-relaxed">
-        El agro moderno exige soluciones eficientes que reduzcan las pérdidas y aumenten la rentabilidad. En Agrimatco Colombia fusionamos el respaldo de una red internacional con un modelo de servicio directo en la finca.
+        El agro moderno exige soluciones eficientes que reduzcan las pérdidas y
+        aumenten la rentabilidad. En Agrimatco Colombia fusionamos el respaldo
+        de una red internacional con un modelo de servicio directo en la finca.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-      
-      <article class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+      <article
+        class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+      >
         <div>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white">
-            <img src="/ico-test.png" alt="Icono de prueba de fertilidad en campo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"/>
-            
-            <!-- 
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>-->
+          <div
+            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white"
+          >
+            <img
+              src="/ico-test.png"
+              alt="Icono de pruebas en campo"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"
+            />
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">Pruebas y Validación en Campo</h3>
-          <p class="text-xs sm:text-sm md:text-base text-body leading-relaxed">
-            Comprobamos la eficacia de nuestras fórmulas directamente en tus lotes comerciales para que veas los resultados reales en tus plantas antes de tomar una decisión.
+          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">
+            Más de 100 Pruebas en Campo
+          </h3>
+          <p
+            class="text-xs sm:text-sm md:text-base text-[#4B5563] leading-relaxed"
+          >
+            Agrimatco ha realizado más de 100 pruebas en campo con diferentes
+            cultivos y etapas fisiológicas, con excelentes resultados.
           </p>
+          <p class="mt-6 text-xs sm:text-sm text-[#4B5563]">
+        Si quieres hacer una prueba,
+        <a
+          href="#contact-form"
+          class="font-semibold text-brand-green hover:underline">contáctanos</a
+        >
+        y la gestionamos con nuestro equipo.
+      </p>
         </div>
-        <span class="sr-only">Pruebas de fertilidad y dosificación técnica en parcelas agrícolas colombianas.</span>
       </article>
 
-      <article class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+      <article
+        class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+      >
         <div>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white">
-            <img src="/ico-group.png" alt="Icono de grupo de personas" class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"/>
-            <!-- 
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>-->
+          <div
+            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white"
+          >
+            <img
+              src="/ico-group.png"
+              alt="Icono de grupo de personas"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"
+            />
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">Acompañamiento Técnico Especializado</h3>
-          <p class="text-xs sm:text-sm md:text-base text-body leading-relaxed">
-            Nuestro equipo de agrónomos realiza visitas periódicas de diagnóstico y seguimiento, garantizando que apliques lo que tu suelo realmente necesita.
+          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">
+            Acompañamiento Técnico Especializado
+          </h3>
+          <p
+            class="text-xs sm:text-sm md:text-base text-[#4B5563] leading-relaxed"
+          >
+            Nuestro equipo de agrónomos realiza visitas periódicas de
+            diagnóstico y seguimiento, garantizando que apliques lo que tu suelo
+            realmente necesita.
           </p>
         </div>
-        <span class="sr-only">Visitas agronómicas de campo en Medellín, Huila y Cundinamarca para nutrición vegetal.</span>
       </article>
 
-      <article class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+      <article
+        class="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+      >
         <div>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white">
-          
-          <img src="/ico-products.png" alt="Icono de productos de fertilizantes en pasta" class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"/>
-            <!--
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>-->
+          <div
+            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-brand-gold/10 text-brand-gold flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-brand-gold group-hover:text-white"
+          >
+            <img
+              src="/ico-products.png"
+              alt="Icono de productos de fertilizantes en pasta"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-md"
+            />
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">Disponibilidad en tu Agrotienda Local</h3>
-          <p class="text-xs sm:text-sm md:text-base text-body leading-relaxed">
-            Trabajamos de la mano con los almacenes agrícolas de cada zona. Facilitamos el acceso a nuestros productos para que los encuentres siempre en la tienda más cercana de tu municipio.
+          <h3 class="text-lg sm:text-xl font-bold text-brand-dark mb-3">
+            Disponibilidad en tu Agrotienda Local
+          </h3>
+          <p
+            class="text-xs sm:text-sm md:text-base text-[#4B5563] leading-relaxed"
+          >
+            Trabajamos de la mano con los almacenes agrícolas de cada zona donde
+            tenemos presencia. Facilitamos el acceso a nuestros productos para
+            que los encuentres siempre en la tienda más cercana de tu municipio.
           </p>
         </div>
-        <span class="sr-only">Almacenes e insumos agrícolas de distribución local Cultivar paste.</span>
       </article>
-
     </div>
+
+    <!-- Franja de cultivos probados (ancho completo, centrada) -->
+   <div class="mt-8 lg:mt-10 bg-white rounded-xl border border-gray-100 shadow-sm p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+  <Image
+    src={lineaCultivar}
+    alt="Línea de productos Cultivar paste"
+    widths={[480, 720, 960]}
+    sizes="(min-width: 1024px) 560px, 100vw"
+    class="w-full h-auto rounded-lg object-contain"
+  />
+
+  <div class="text-center lg:text-left">
+    <span class="text-brand-green text-xs sm:text-sm font-bold tracking-widest uppercase block mb-4">
+      Cultivos en los que hemos realizado pruebas
+    </span>
+    <div class="flex flex-wrap justify-center lg:justify-start gap-2">
+      {cultivosProbados.map((cultivo) => (
+        <span class="text-xs font-medium text-[#4B5563] bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5">
+          {cultivo}
+        </span>
+      ))}
+      <span class="text-xs font-semibold text-brand-green px-2 py-1.5">y más</span>
+    </div>
+  </div>
+</div>
   </div>
 </section>

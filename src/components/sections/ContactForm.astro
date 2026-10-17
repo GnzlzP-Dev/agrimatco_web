@@ -18,12 +18,18 @@ const contactZones = [
     advisor: 'Victor Moreno',
     phone: '315 2362715',
   },
+  {
+    name: 'Tu zona',
+    coverage: 'Si tu municipio no está en la lista, te contactamos con un asesor de tu zona.',
+    advisor: 'Asesor Agrimatco',
+    phone: '312 2278303',
+  }
 ];
 ---
 
 <section id="contact-form" class="relative bg-surface py-16 md:py-24 border-t border-gray-100 scroll-mt-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 mb-12">
       {contactZones.map((zone) => (
         <div class="bg-white rounded-xl p-6 sm:p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 text-left">
           <h3 class="text-lg sm:text-xl font-bold text-ink mb-1">{zone.name}</h3>
@@ -104,7 +110,7 @@ const contactZones = [
       </div>
 
       <label class="flex items-start gap-2.5 pt-1">
-        <input type="checkbox" required class="mt-1 accent-brand-green" required/>
+        <input type="checkbox" required class="mt-1 accent-brand-green"/>
         <span class="text-xs text-muted leading-relaxed">
           Acepto que Agrimatco Colombia me contacte por WhatsApp o llamada para brindarme asesoría.
         </span>

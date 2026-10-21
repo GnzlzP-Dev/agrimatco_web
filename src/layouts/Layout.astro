@@ -22,7 +22,15 @@ const socialImage = new URL(image, url_domain).href;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <meta name="robots" content="index, follow" />
-  <meta name="google-site-verification" content="aViNKa1DZEf1CfGtdf9Ddu6VRHUo5dVNqbMYVKfvm8k" />
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WQ3LRW6P8M"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WQ3LRW6P8M');
+</script>
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
